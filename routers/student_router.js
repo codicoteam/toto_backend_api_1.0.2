@@ -1,132 +1,379 @@
 const express = require("express");
 const router = express.Router();
-const studentService = require("../services/student_service.js");
+const studentController = require("../controllers/student_controller");
+
+/**
+ * @swagger
+ * tags:
+ *   name: Student
+ *   description: Student management endpoints
+ */
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
 const { authenticateToken } = require("../middlewares/auth");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
 
-// Student login by email
-router.post("/login", async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const student = await studentService.getStudentByEmail(email);
+// Student login
 
-        if (!student) {
-            return res.status(404).json({ message: "Student not found" });
-        }
+/**
+ * @swagger
+ * /api/v1/student:
+ *   post:
+ *     tags:
+ *       - Student
+ *     summary: Create new Student
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       201:
+ *         description: Created
+ *       400:
+ *         description: Bad request
+ */
+router.post("/login", studentController.loginStudent);
 
-        const isPasswordValid = await bcrypt.compare(password, student.password);
-        if (!isPasswordValid) {
-            return res.status(401).json({ message: "Invalid credentials" });
-        }
-        const token = jwt.sign(
-            { id: student._id, email: student.email },
-            "toto_academy_2025",
-            { expiresIn: "8h" }
-        );
+// Student registration
 
-        res.status(200).json({ message: "Login successful", token, data: student });
-    } catch (error) {
-        res.status(500).json({ message: "Login failed", error: error.message });
-    }
-});
-
-// Student login by phone number
-router.post("/loginbyphone", async (req, res) => {
-    try {
-        const { phone_number, password } = req.body;
-        const student = await studentService.getStudentByPhoneNumber(phone_number);
-
-        if (!student) {
-            return res.status(404).json({ message: "Student not found" });
-        }
-
-        const isPasswordValid = await bcrypt.compare(password, student.password);
-        if (!isPasswordValid) {
-            return res.status(401).json({ message: "Invalid credentials" });
-        }
-
-        const token = jwt.sign(
-            { id: student._id, phone: student.phone_number },
-            "toto_academy_2025",
-            { expiresIn: "8h" }
-        );
-
-        res.status(200).json({ message: "Login successful", token, data: student });
-    } catch (error) {
-        res.status(500).json({ message: "Login failed", error: error.message });
-    }
-});
-
-// Student signup
-router.post("/signup", async (req, res) => {
-    try {
-        const studentData = req.body;
-        const newStudent = await studentService.createStudent(studentData);
-
-        const token = jwt.sign(
-            { id: newStudent._id, email: newStudent.email },
-            "toto_academy_2025",
-            { expiresIn: "8h" }
-        );
-
-        res.status(201).json({
-            message: "Student registered successfully",
-            data: newStudent,
-            token,
-        });
-    } catch (error) {
-        if (error.message === "Email already exists") {
-            return res.status(409).json({ message: "Email already exists" });
-        }
-        res.status(400).json({ message: "Error registering student", error: error.message });
-    }
-});
+/**
+ * @swagger
+ * /api/v1/student:
+ *   post:
+ *     tags:
+ *       - Student
+ *     summary: Create new Student
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       201:
+ *         description: Created
+ *       400:
+ *         description: Bad request
+ */
+router.post("/register", studentController.registerStudent);
 
 // Get all students
-router.get("/getallstudents", authenticateToken, async (req, res) => {
-    try {
-        const students = await studentService.getAllStudents();
-        res.status(200).json({ message: "Students retrieved successfully", data: students });
-    } catch (error) {
-        res.status(500).json({ message: "Error retrieving students", error: error.message });
-    }
-});
 
-// Get student by email
-router.get("/getstudent/:email", authenticateToken, async (req, res) => {
-    try {
-        const student = await studentService.getStudentByEmail(req.params.email);
-        if (!student) {
-            return res.status(404).json({ message: "Student not found" });
-        }
-        res.status(200).json({ message: "Student retrieved successfully", data: student });
-    } catch (error) {
-        res.status(500).json({ message: "Error retrieving student", error: error.message });
-    }
-});
+/**
+ * @swagger
+ * /api/v1/student:
+ *   get:
+ *     tags:
+ *       - Student
+ *     summary: Get all Student records
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+router.get("/", authenticateToken, studentController.getAllStudents);
+
+// Get student by ID
+
+/**
+ * @swagger
+ * /api/v1/student/{id}:
+ *   get:
+ *     tags:
+ *       - Student
+ *     summary: Get Student by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *       404:
+ *         description: Not found
+ */
+router.get("/:id", authenticateToken, studentController.getStudentById);
 
 // Update student
-router.put("/updatestudent/:id", authenticateToken, async (req, res) => {
-    try {
-        const updatedStudent = await studentService.updateStudent(req.params.id, req.body);
-        if (!updatedStudent) {
-            return res.status(404).json({ message: "Student not found" });
-        }
-        res.status(200).json({ message: "Student updated successfully", data: updatedStudent });
-    } catch (error) {
-        res.status(500).json({ message: "Error updating student", error: error.message });
-    }
-});
+
+/**
+ * @swagger
+ * /api/v1/student/{id}:
+ *   put:
+ *     tags:
+ *       - Student
+ *     summary: Update Student
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Success
+ *       404:
+ *         description: Not found
+ */
+router.put("/:id", authenticateToken, studentController.updateStudent);
 
 // Delete student
-router.delete("/deletestudent/:id", authenticateToken, async (req, res) => {
-    try {
-        await studentService.deleteStudent(req.params.id);
-        res.status(200).json({ message: "Student deleted successfully" });
-    } catch (error) {
-        res.status(500).json({ message: "Error deleting student", error: error.message });
-    }
-});
+
+/**
+ * @swagger
+ * /api/v1/student/{id}:
+ *   delete:
+ *     tags:
+ *       - Student
+ *     summary: Delete Student
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *       404:
+ *         description: Not found
+ */
+router.delete("/:id", authenticateToken, studentController.deleteStudent);
+
+// Forgot password
+
+/**
+ * @swagger
+ * /api/v1/student:
+ *   post:
+ *     tags:
+ *       - Student
+ *     summary: Create new Student
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       201:
+ *         description: Created
+ *       400:
+ *         description: Bad request
+ */
+router.post("/forgot-password", studentController.forgotPassword);
+
+// Verify reset OTP
+
+/**
+ * @swagger
+ * /api/v1/student:
+ *   post:
+ *     tags:
+ *       - Student
+ *     summary: Create new Student
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       201:
+ *         description: Created
+ *       400:
+ *         description: Bad request
+ */
+router.post("/verify-reset-otp", studentController.verifyResetOTP);
+
+// Reset password
+
+/**
+ * @swagger
+ * /api/v1/student:
+ *   post:
+ *     tags:
+ *       - Student
+ *     summary: Create new Student
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       201:
+ *         description: Created
+ *       400:
+ *         description: Bad request
+ */
+router.post("/reset-password", studentController.resetPassword);
+
+// Get student progress
+
+/**
+ * @swagger
+ * /api/v1/student/{id}:
+ *   get:
+ *     tags:
+ *       - Student
+ *     summary: Get Student by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *       404:
+ *         description: Not found
+ */
+router.get("/:id/progress", authenticateToken, studentController.getStudentProgress);
+
+// Update subscription
+
+/**
+ * @swagger
+ * /api/v1/student/{id}:
+ *   put:
+ *     tags:
+ *       - Student
+ *     summary: Update Student
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Success
+ *       404:
+ *         description: Not found
+ */
+router.put("/:id/subscription", authenticateToken, studentController.updateSubscription);
+
+// Get student stats
+
+/**
+ * @swagger
+ * /api/v1/student/{id}:
+ *   get:
+ *     tags:
+ *       - Student
+ *     summary: Get Student by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *       404:
+ *         description: Not found
+ */
+router.get("/:id/stats", authenticateToken, studentController.getStudentStats);
+
+// Search students
+router.get("/search", authenticateToken, studentController.searchStudents);
+
+// Get current student profile
+router.get("/profile/me", authenticateToken, studentController.getCurrentStudent);
+
+// Update profile picture status (admin only)
+
+/**
+ * @swagger
+ * /api/v1/student/{id}:
+ *   put:
+ *     tags:
+ *       - Student
+ *     summary: Update Student
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Success
+ *       404:
+ *         description: Not found
+ */
+router.put("/:id/profile-picture-status", authenticateToken, studentController.updateProfilePictureStatus);
 
 module.exports = router;

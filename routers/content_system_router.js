@@ -4,6 +4,28 @@ const contentService = require("../services/content_system_service"); // Adjust 
 const { authenticateToken } = require("../middlewares/auth");
 
 // Create new content
+
+/**
+ * @swagger
+ * /api/v1/contentsystem:
+ *   post:
+ *     tags:
+ *       - ContentSystem
+ *     summary: Create new ContentSystem
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       201:
+ *         description: Created
+ *       400:
+ *         description: Bad request
+ */
 router.post("/create", authenticateToken, async (req, res) => {
   try {
     const newContent = await contentService.createContent(req.body);

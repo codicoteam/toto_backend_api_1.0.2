@@ -6,6 +6,28 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 // Login route to authenticate admin and return JWT
+
+/**
+ * @swagger
+ * /api/v1/admin:
+ *   post:
+ *     tags:
+ *       - Admin
+ *     summary: Create new Admin
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       201:
+ *         description: Created
+ *       400:
+ *         description: Bad request
+ */
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -39,6 +61,28 @@ router.post("/login", async (req, res) => {
 });
 
 // Route to handle admin signup
+
+/**
+ * @swagger
+ * /api/v1/admin:
+ *   post:
+ *     tags:
+ *       - Admin
+ *     summary: Create new Admin
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       201:
+ *         description: Created
+ *       400:
+ *         description: Bad request
+ */
 router.post("/signup", async (req, res) => {
   try {
     const adminData = req.body;

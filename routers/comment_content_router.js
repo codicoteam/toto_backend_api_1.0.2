@@ -1,122 +1,153 @@
 const express = require("express");
 const router = express.Router();
-const commentService = require("../services/comment_content_service"); // Adjust path as needed
+const commentContentController = require("../controllers/comment_content_controller");
+
+/**
+ * @swagger
+ * tags:
+ *   name: Comment
+ *   description: Comment management endpoints
+ */
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
 const { authenticateToken } = require("../middlewares/auth");
 
-// Create new comment
-router.post("/create", authenticateToken, async (req, res) => {
-  try {
-    const newComment = await commentService.createComment(req.body);
-    res
-      .status(201)
-      .json({ message: "Comment created successfully", data: newComment });
-  } catch (error) {
-    res
-      .status(400)
-      .json({ message: "Failed to create comment", error: error.message });
-  }
-});
+// Basic CRUD routes
 
-// Get all comments
-router.get("/getall", authenticateToken, async (req, res) => {
-  try {
-    const comments = await commentService.getAllComments();
-    res
-      .status(200)
-      .json({ message: "Comments retrieved successfully", data: comments });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to retrieve comments", error: error.message });
-  }
-});
+/**
+ * @swagger
+ * /api/v1/comment:
+ *   get:
+ *     tags:
+ *       - Comment
+ *     summary: Get all Comment records
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+router.get("/", authenticateToken, commentContentController.getAll);
 
-// Get comments by content_system_id
-router.get(
-  "/bycontent/:contentSystemId",
-  authenticateToken,
-  async (req, res) => {
-    try {
-      const comments = await commentService.getCommentsByContentSystemId(
-        req.params.contentSystemId
-      );
-      res.status(200).json({
-        message: "Comments retrieved successfully",
-        data: comments,
-      });
-    } catch (error) {
-      res.status(500).json({
-        message: "Failed to retrieve comments by content_system_id",
-        error: error.message,
-      });
-    }
-  }
-);
+/**
+ * @swagger
+ * /api/v1/comment/{id}:
+ *   get:
+ *     tags:
+ *       - Comment
+ *     summary: Get Comment by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *       404:
+ *         description: Not found
+ */
+router.get("/:id", authenticateToken, commentContentController.getById);
 
-// Get comment by ID
-router.get("/get/:id", authenticateToken, async (req, res) => {
-  try {
-    const comment = await commentService.getCommentById(req.params.id);
-    res
-      .status(200)
-      .json({ message: "Comment retrieved successfully", data: comment });
-  } catch (error) {
-    res
-      .status(404)
-      .json({ message: "Comment not found", error: error.message });
-  }
-});
+/**
+ * @swagger
+ * /api/v1/comment:
+ *   post:
+ *     tags:
+ *       - Comment
+ *     summary: Create new Comment
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       201:
+ *         description: Created
+ *       400:
+ *         description: Bad request
+ */
+router.post("/", authenticateToken, commentContentController.create);
 
-// Update comment by ID
-router.put("/update/:id", authenticateToken, async (req, res) => {
-  try {
-    const updatedComment = await commentService.updateComment(
-      req.params.id,
-      req.body
-    );
-    res.status(200).json({
-      message: "Comment updated successfully",
-      data: updatedComment,
-    });
-  } catch (error) {
-    res.status(400).json({
-      message: "Failed to update comment",
-      error: error.message,
-    });
-  }
-});
+/**
+ * @swagger
+ * /api/v1/comment/{id}:
+ *   put:
+ *     tags:
+ *       - Comment
+ *     summary: Update Comment
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Success
+ *       404:
+ *         description: Not found
+ */
+router.put("/:id", authenticateToken, commentContentController.update);
 
-// Delete comment by ID
-router.delete("/delete/:id", authenticateToken, async (req, res) => {
-  try {
-    await commentService.deleteComment(req.params.id);
-    res.status(200).json({ message: "Comment deleted successfully" });
-  } catch (error) {
-    res.status(500).json({
-      message: "Failed to delete comment",
-      error: error.message,
-    });
-  }
-});
-
-// Delete all comments by content_system_id
-router.delete(
-  "/delete/bycontent/:contentSystemId",
-  authenticateToken,
-  async (req, res) => {
-    try {
-      const result = await commentService.deleteCommentsByContentSystemId(
-        req.params.contentSystemId
-      );
-      res
-        .status(200)
-        .json({ message: "Comments deleted successfully", result });
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Failed to delete comments", error: error.message });
-    }
-  }
-);
+/**
+ * @swagger
+ * /api/v1/comment/{id}:
+ *   delete:
+ *     tags:
+ *       - Comment
+ *     summary: Delete Comment
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Success
+ *       404:
+ *         description: Not found
+ */
+router.delete("/:id", authenticateToken, commentContentController.delete);
 
 module.exports = router;
