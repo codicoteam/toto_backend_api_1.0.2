@@ -1,5 +1,5 @@
 // message_community Service
-const message_communityModel = require("../models/message_community_model.js");
+const message_communityModel = require('../models/message_community_model.js');
 
 exports.getAll = async (filters = {}) => {
   return await message_communityModel.find(filters);

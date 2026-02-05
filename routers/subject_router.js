@@ -150,4 +150,6 @@ router.put("/:id", authenticateToken, subjectController.update);
  */
 router.delete("/:id", authenticateToken, subjectController.delete);
 
+router.get('/', authenticateToken, subjectController.getAll);
+router.post('/', authenticateToken, subjectController.create);
 module.exports = router;

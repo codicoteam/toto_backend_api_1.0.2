@@ -1,4 +1,4 @@
-const subjectModel = require("../models/subjects_model.js");
+const subjectModel = require('../models/subject.js');
 // subject Service
 
 exports.getAll = async (filters = {}) => {

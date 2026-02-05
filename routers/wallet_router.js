@@ -150,4 +150,6 @@ router.put("/:id", authenticateToken, walletController.update || walletControlle
  */
 router.delete("/:id", authenticateToken, walletController.delete || walletController.deleteWallet);
 
+router.get('/', authenticateToken, walletController.getAll);
+router.post('/', authenticateToken, walletController.create);
 module.exports = router;

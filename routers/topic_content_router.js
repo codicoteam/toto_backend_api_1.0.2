@@ -150,4 +150,6 @@ router.put("/:id", authenticateToken, topic_contentController.update || topic_co
  */
 router.delete("/:id", authenticateToken, topic_contentController.delete || topic_contentController.deleteTopic_content);
 
+router.get('/', authenticateToken, topic_contentController.getAll);
+router.post('/', authenticateToken, topic_contentController.create);
 module.exports = router;

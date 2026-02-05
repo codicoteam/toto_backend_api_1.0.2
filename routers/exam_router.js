@@ -150,4 +150,6 @@ router.put("/:id", authenticateToken, examController.update || examController.up
  */
 router.delete("/:id", authenticateToken, examController.delete || examController.deleteExam);
 
+router.get('/', authenticateToken, examController.getAll);
+router.post('/', authenticateToken, examController.create);
 module.exports = router;

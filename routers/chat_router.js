@@ -166,4 +166,6 @@ router.put("/:id", authenticateToken, chatController.update);
 
 router.delete("/:id", authenticateToken, chatController.delete);
 
+router.get('/', authenticateToken, chatController.getAll);
+router.post('/', authenticateToken, chatController.create);
 module.exports = router;

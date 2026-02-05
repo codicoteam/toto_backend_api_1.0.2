@@ -1,5 +1,5 @@
 // teacher Service
-const teacherModel = require("../models/teacher_model.js");
+const teacherModel = require('../models/teacher_model.js');
 
 exports.getAll = async (filters = {}) => {
   return await teacherModel.find(filters);

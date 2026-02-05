@@ -166,4 +166,6 @@ router.put("/:id", authenticateToken, home_bannerController.update);
 
 router.delete("/:id", authenticateToken, home_bannerController.delete);
 
+router.get('/', authenticateToken, home_bannerController.getAll);
+router.post('/', authenticateToken, home_bannerController.create);
 module.exports = router;

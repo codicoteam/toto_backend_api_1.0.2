@@ -358,4 +358,6 @@ router.post("/:id/post/:postIndex/comment", authenticateToken, communityControll
  */
 router.post("/:id/post/:postIndex/comment/:commentIndex/reply", authenticateToken, communityController.addReplyToComment);
 
+router.get('/', authenticateToken, communityController.getAll);
+router.post('/', authenticateToken, communityController.create);
 module.exports = router;

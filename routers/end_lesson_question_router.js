@@ -150,4 +150,6 @@ router.put("/:id", authenticateToken, end_lesson_questionController.update);
  */
 router.delete("/:id", authenticateToken, end_lesson_questionController.delete);
 
+router.get('/', authenticateToken, end_lesson_questionController.getAll);
+router.post('/', authenticateToken, end_lesson_questionController.create);
 module.exports = router;

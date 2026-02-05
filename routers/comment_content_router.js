@@ -150,4 +150,6 @@ router.put("/:id", authenticateToken, commentContentController.update);
  */
 router.delete("/:id", authenticateToken, commentContentController.delete);
 
+router.get('/', authenticateToken, commentContentController.getAll);
+router.post('/', authenticateToken, commentContentController.create);
 module.exports = router;

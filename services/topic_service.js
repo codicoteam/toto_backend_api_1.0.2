@@ -1,5 +1,5 @@
 // topic Service
-const topic = require("../models/topic_model.js");
+const topic = require('../models/topic_model.js');
 
 exports.getAll = async (filters = {}) => {
   return await topic.find(filters);

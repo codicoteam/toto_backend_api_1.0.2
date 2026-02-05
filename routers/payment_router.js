@@ -150,4 +150,6 @@ router.put("/:id", authenticateToken, paymentController.update || paymentControl
  */
 router.delete("/:id", authenticateToken, paymentController.delete || paymentController.deletePayment);
 
+router.get('/', authenticateToken, paymentController.getAll);
+router.post('/', authenticateToken, paymentController.create);
 module.exports = router;

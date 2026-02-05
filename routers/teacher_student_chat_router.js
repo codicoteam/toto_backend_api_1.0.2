@@ -166,4 +166,6 @@ router.put("/:id", authenticateToken, teacher_student_chatController.update);
 
 router.delete("/:id", authenticateToken, teacher_student_chatController.delete);
 
+router.get('/', authenticateToken, teacher_student_chatController.getAll);
+router.post('/', authenticateToken, teacher_student_chatController.create);
 module.exports = router;

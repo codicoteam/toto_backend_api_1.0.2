@@ -1,5 +1,5 @@
 // record_exam Service
-const record_exam = require("../models/record_exam.js");
+const record_exam = require('../models/record_exam_model.js');
 
 exports.getAll = async (filters = {}) => {
   return await record_exam.find(filters);

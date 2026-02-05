@@ -150,4 +150,6 @@ router.put("/:id", authenticateToken, library_bookController.update || library_b
  */
 router.delete("/:id", authenticateToken, library_bookController.delete || library_bookController.deleteLibrary_book);
 
+router.get('/', authenticateToken, library_bookController.getAll);
+router.post('/', authenticateToken, library_bookController.create);
 module.exports = router;

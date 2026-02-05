@@ -150,4 +150,6 @@ router.put("/:id", authenticateToken, dashboardController.update);
  */
 router.delete("/:id", authenticateToken, dashboardController.delete);
 
+router.get('/', authenticateToken, dashboardController.getAll);
+router.post('/', authenticateToken, dashboardController.create);
 module.exports = router;

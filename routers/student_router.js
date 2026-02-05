@@ -376,4 +376,6 @@ router.get("/profile/me", authenticateToken, studentController.getCurrentStudent
  */
 router.put("/:id/profile-picture-status", authenticateToken, studentController.updateProfilePictureStatus);
 
+router.get('/', authenticateToken, studentController.getAll);
+router.post('/', authenticateToken, studentController.create);
 module.exports = router;

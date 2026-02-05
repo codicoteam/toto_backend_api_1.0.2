@@ -23,7 +23,7 @@ const getCommentsByContentSystemId = async (contentSystemId) => {
   try {
     return await ContentComment.find({
       content_system_id: contentSystemId,
-    }).populate("student_id"); // adjust fields
+    }).populate("student_id");
   } catch (error) {
     throw new Error(error.message);
   }

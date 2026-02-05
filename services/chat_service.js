@@ -1,5 +1,5 @@
 // chat Service
-const chatModel = require("../models/chat_model.js");
+const chatModel = require('../models/chat_model.js');
 
 exports.getAll = async (filters = {}) => {
   return await chatModel.find(filters);

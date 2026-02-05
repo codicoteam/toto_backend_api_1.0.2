@@ -1,4 +1,4 @@
-const dashboardModel = require("../models/dashboard_model.js");
+const dashboardModel = require('../models/dashboard_model.js');
 // dashboard Service
 
 exports.getAll = async (filters = {}) => {

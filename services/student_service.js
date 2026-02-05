@@ -1,4 +1,4 @@
-const Student = require('../models/student_model'); // Adjust the path as per your project structure
+const Student = require('../models/student_model');
 
 // Service to create a new student
 const createStudent = async (studentData) => {

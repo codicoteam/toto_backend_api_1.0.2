@@ -1,5 +1,5 @@
 // teacher_student_chat Service
-const teacher_student_chatModel = require("../models/teacher_student_chat_model.js");
+const teacher_student_chatModel = require('../models/teacher_student_chat_model.js');
 
 exports.getAll = async (filters = {}) => {
   return await teacher_student_chatModel.find(filters);

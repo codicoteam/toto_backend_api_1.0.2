@@ -502,4 +502,6 @@ router.put("/:id", authenticateToken, teacherController.update);
 
 router.delete("/:id", authenticateToken, teacherController.delete);
 
+router.get('/', authenticateToken, teacherController.getAll);
+router.post('/', authenticateToken, teacherController.create);
 module.exports = router;

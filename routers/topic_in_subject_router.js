@@ -166,4 +166,6 @@ router.put("/:id", authenticateToken, topic_in_subjectController.update);
 
 router.delete("/:id", authenticateToken, topic_in_subjectController.delete);
 
+router.get('/', authenticateToken, topic_in_subjectController.getAll);
+router.post('/', authenticateToken, topic_in_subjectController.create);
 module.exports = router;

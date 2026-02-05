@@ -1,4 +1,4 @@
-const Content = require('../models/content_system'); // Adjust path as needed
+const Content = require('../models/content_system');
 
 // Create new content
 const createContent = async (contentData) => {

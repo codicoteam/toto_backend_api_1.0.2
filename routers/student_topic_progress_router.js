@@ -150,4 +150,6 @@ router.put("/:id", authenticateToken, student_topic_progressController.update);
  */
 router.delete("/:id", authenticateToken, student_topic_progressController.delete);
 
+router.get('/', authenticateToken, student_topic_progressController.getAll);
+router.post('/', authenticateToken, student_topic_progressController.create);
 module.exports = router;

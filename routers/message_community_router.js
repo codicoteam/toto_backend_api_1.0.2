@@ -150,4 +150,6 @@ router.put("/:id", authenticateToken, message_communityController.update);
  */
 router.delete("/:id", authenticateToken, message_communityController.delete);
 
+router.get('/', authenticateToken, message_communityController.getAll);
+router.post('/', authenticateToken, message_communityController.create);
 module.exports = router;

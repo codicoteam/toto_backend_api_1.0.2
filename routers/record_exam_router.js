@@ -150,4 +150,6 @@ router.put("/:id", authenticateToken, record_examController.update);
  */
 router.delete("/:id", authenticateToken, record_examController.delete);
 
+router.get('/', authenticateToken, record_examController.getAll);
+router.post('/', authenticateToken, record_examController.create);
 module.exports = router;
