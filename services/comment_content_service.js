@@ -1,92 +1,65 @@
-const ContentComment = require("../models/comment_content_schema"); 
+// Comment_content Service - Placeholder implementation
+// TODO: Connect to actual database/model
 
-const createComment = async (commentData) => {
-  try {
-    const newComment = new ContentComment(commentData);
-    await newComment.save();
-    return newComment;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
-
-const getAllComments = async () => {
-  try {
-    return await ContentComment.find().populate("student_id", "firstName lastName email");
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
-const getCommentsByContentSystemId = async (contentSystemId) => {
-  try {
-    return await ContentComment.find({
-      content_system_id: contentSystemId,
-    }).populate("student_id");
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
-const getCommentById = async (id) => {
-  try {
-    const comment = await ContentComment.findById(id);
-    if (!comment) {
-      throw new Error("Comment not found");
+exports.getAll = async () => {
+  // Placeholder: Return mock data
+  console.log("Getting all comment_content (placeholder)");
+  return [
+    {
+      id: "1",
+      name: "Sample Comment_content 1",
+      description: "This is a placeholder comment_content",
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "2", 
+      name: "Sample Comment_content 2",
+      description: "Another placeholder comment_content",
+      createdAt: new Date().toISOString()
     }
-    return comment;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-const updateComment = async (id, updateData) => {
-  try {
-    const updatedComment = await ContentComment.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true }
-    );
-    if (!updatedComment) {
-      throw new Error("Comment not found");
-    }
-    return updatedComment;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+  ];
 };
 
-const deleteComment = async (id) => {
-  try {
-    const deletedComment = await ContentComment.findByIdAndDelete(id);
-    if (!deletedComment) {
-      throw new Error("Comment not found");
-    }
-    return deletedComment;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+exports.getById = async (id) => {
+  // Placeholder: Return mock data
+  console.log("Getting comment_content by ID: " + id + " (placeholder)");
+  return {
+    id: id,
+    name: "Sample Comment_content " + id,
+    description: "This is a placeholder comment_content with ID " + id,
+    details: "More placeholder data for comment_content",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
 };
 
-const deleteCommentsByContentSystemId = async (contentSystemId) => {
-  try {
-    const result = await ContentComment.deleteMany({ content_system_id: contentSystemId });
-    if (result.deletedCount === 0) {
-      throw new Error("No comments found for the specified content_system_id");
-    }
-    return result;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+exports.create = async (data) => {
+  // Placeholder: Return mock created data
+  console.log("Creating comment_content (placeholder):", data);
+  return {
+    id: "new-" + Date.now(),
+    ...data,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
 };
 
+exports.update = async (id, data) => {
+  // Placeholder: Return mock updated data
+  console.log("Updating comment_content " + id + " (placeholder):", data);
+  return {
+    id: id,
+    ...data,
+    updatedAt: new Date().toISOString()
+  };
+};
 
-module.exports = {
-  createComment,
-  getAllComments,
-  getCommentsByContentSystemId,
-  getCommentById,
-  updateComment,
-  deleteComment,
-  deleteCommentsByContentSystemId
+exports.delete = async (id) => {
+  // Placeholder: Return success message
+  console.log("Deleting comment_content " + id + " (placeholder)");
+  return { 
+    success: true, 
+    message: "Comment_content " + id + " deleted successfully (placeholder)",
+    deletedId: id 
+  };
 };

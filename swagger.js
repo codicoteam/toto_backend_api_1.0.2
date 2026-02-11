@@ -14,6 +14,22 @@ const options = {
         description: 'Development server',
       },
     ],
+    tags: [
+      { name: 'Admin', description: 'Administrator operations' },
+      { name: 'Student', description: 'Student management' },
+      { name: 'Teacher', description: 'Teacher operations' },
+      { name: 'ContentSystem', description: 'Content system management' },
+      { name: 'Topic', description: 'Topic management' },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
   },
   apis: ['./routers/*.js'],
 };

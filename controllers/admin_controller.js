@@ -85,10 +85,10 @@ exports.delete = async (req, res) => {
   }
 };
 
-// Additional admin functions from original file
+// Additional admin functions
 exports.registerAdmin = async (req, res) => {
   try {
-    const admin = await adminService.createAdmin(req.body);
+    const admin = await adminService.create(req.body);
     res.status(201).json({
       success: true,
       message: "Admin registered successfully",
@@ -105,7 +105,7 @@ exports.registerAdmin = async (req, res) => {
 
 exports.loginAdmin = async (req, res) => {
   try {
-    const result = await adminService.loginAdmin(req.body);
+    const result = await adminService.login(req.body);
     res.status(200).json({
       success: true,
       message: "Login successful",
@@ -120,9 +120,12 @@ exports.loginAdmin = async (req, res) => {
   }
 };
 
+// Alias for login (for router compatibility)
+exports.login = exports.loginAdmin;
+
 exports.getAdminById = async (req, res) => {
   try {
-    const admin = await adminService.getAdminById(req.params.id);
+    const admin = await adminService.getById(req.params.id);
     res.status(200).json({
       success: true,
       message: "Admin retrieved successfully",
@@ -139,7 +142,7 @@ exports.getAdminById = async (req, res) => {
 
 exports.getAllAdmins = async (req, res) => {
   try {
-    const admins = await adminService.getAllAdmins();
+    const admins = await adminService.getAll();
     res.status(200).json({
       success: true,
       message: "Admins retrieved successfully",
@@ -156,7 +159,7 @@ exports.getAllAdmins = async (req, res) => {
 
 exports.updateAdmin = async (req, res) => {
   try {
-    const admin = await adminService.updateAdmin(req.params.id, req.body);
+    const admin = await adminService.update(req.params.id, req.body);
     res.status(200).json({
       success: true,
       message: "Admin updated successfully",
@@ -173,7 +176,7 @@ exports.updateAdmin = async (req, res) => {
 
 exports.deleteAdmin = async (req, res) => {
   try {
-    await adminService.deleteAdmin(req.params.id);
+    await adminService.delete(req.params.id);
     res.status(200).json({
       success: true,
       message: "Admin deleted successfully"
@@ -186,10 +189,3 @@ exports.deleteAdmin = async (req, res) => {
     });
   }
 };
-
-// Add aliases for router compatibility
-exports.getAll = exports.getAllAdmins;
-exports.getById = exports.getAdminById;
-exports.create = exports.registerAdmin;
-exports.update = exports.updateAdmin;
-exports.delete = exports.deleteAdmin;
