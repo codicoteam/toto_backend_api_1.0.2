@@ -1,14 +1,16 @@
-const express = require('express');
-const app = express();
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.js');
+const express = require("express");
+const cors = require("cors");
+const dotenv = require("dotenv");
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Load env
+dotenv.config();
 
-// Swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// Database connection
+const connectDB = require("./configs/db_config");
+connectDB();
+
+// Swagger setup
+const setupSwagger = require("./configs/swagger_config");
 
 // Import routers
 const adminRouter = require('./routers/admin_router');
@@ -35,8 +37,17 @@ const topic_in_subjectRouter = require('./routers/topic_in_subject_router');
 const topicRouter = require('./routers/topic_router');
 const walletRouter = require('./routers/wallet_router');
 
+const app = express();
 
-// Use routers
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Setup Swagger
+setupSwagger(app);
+
+// API Routes
 app.use('/api/v1/admin', adminRouter);
 app.use('/api/v1/chat', chatRouter);
 app.use('/api/v1/comment-content', comment_contentRouter);
@@ -61,16 +72,40 @@ app.use('/api/v1/topic-in-subject', topic_in_subjectRouter);
 app.use('/api/v1/topic', topicRouter);
 app.use('/api/v1/wallet', walletRouter);
 
+// Health check route
+app.get('/', (req, res) => {
+  res.json({ 
+    success: true, 
+    message: 'Toto Academy API is running',
+    environment: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString()
+  });
+});
 
-// Error handling middleware
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ 
+    success: false, 
+    message: 'Route not found' 
+  });
+});
+
+// Global error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
+  console.error('Global error:', err.stack || err);
+  res.status(500).json({ 
+    success: false, 
+    message: 'Something went wrong!',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
 });
 
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`API Documentation: http://localhost:${PORT}/api-docs`);
+  console.log(`‚úÖ Server running on port ${PORT}`);
+  console.log(`Ì≥ò API Documentation: http://localhost:${PORT}/api-docs`);
+  console.log(`Ìºç Environment: ${process.env.NODE_ENV || 'development'}`);
 });
+
+module.exports = app;
