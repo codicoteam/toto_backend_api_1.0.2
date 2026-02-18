@@ -88,11 +88,52 @@ exports.delete = async (req, res) => {
 // Additional admin functions
 exports.registerAdmin = async (req, res) => {
   try {
-    const admin = await adminService.create(req.body);
+    const { firstName, lastName, email, password, contactNumber, profilePicture } = req.body;
+    
+    // Validate required fields
+    const missingFields = [];
+    if (!firstName) missingFields.push('firstName');
+    if (!lastName) missingFields.push('lastName');
+    if (!email) missingFields.push('email');
+    if (!password) missingFields.push('password');
+    if (!contactNumber) missingFields.push('contactNumber');
+    
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Missing required fields: ${missingFields.join(', ')}`
+      });
+    }
+    
+    // Check if admin already exists
+    const existingAdmin = await adminService.getAdminByEmail(email);
+    if (existingAdmin) {
+      return res.status(409).json({
+        success: false,
+        message: "Admin with this email already exists"
+      });
+    }
+    
+    // Prepare admin data with default profile picture if not provided
+    const adminData = {
+      firstName,
+      lastName,
+      email,
+      password,
+      contactNumber,
+      profilePicture: profilePicture || "https://default-avatar.com/default.png"
+    };
+    
+    const admin = await adminService.create(adminData);
+    
+    // Don't send password back
+    const adminResponse = admin.toObject ? admin.toObject() : admin;
+    delete adminResponse.password;
+    
     res.status(201).json({
       success: true,
       message: "Admin registered successfully",
-      data: admin
+      data: adminResponse
     });
   } catch (error) {
     res.status(400).json({
@@ -105,6 +146,15 @@ exports.registerAdmin = async (req, res) => {
 
 exports.loginAdmin = async (req, res) => {
   try {
+    const { email, password } = req.body;
+    
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required"
+      });
+    }
+    
     const result = await adminService.login(req.body);
     res.status(200).json({
       success: true,
