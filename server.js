@@ -109,3 +109,12 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+
+// Safety check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    time: new Date().toISOString(),
+    routers: Object.keys(require.cache).filter(x => x.includes('routers')).length
+  });
+});

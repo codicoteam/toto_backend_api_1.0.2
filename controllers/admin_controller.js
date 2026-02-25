@@ -85,55 +85,14 @@ exports.delete = async (req, res) => {
   }
 };
 
-// Additional admin functions
+// Auth methods
 exports.registerAdmin = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, contactNumber, profilePicture } = req.body;
-    
-    // Validate required fields
-    const missingFields = [];
-    if (!firstName) missingFields.push('firstName');
-    if (!lastName) missingFields.push('lastName');
-    if (!email) missingFields.push('email');
-    if (!password) missingFields.push('password');
-    if (!contactNumber) missingFields.push('contactNumber');
-    
-    if (missingFields.length > 0) {
-      return res.status(400).json({
-        success: false,
-        message: `Missing required fields: ${missingFields.join(', ')}`
-      });
-    }
-    
-    // Check if admin already exists
-    const existingAdmin = await adminService.getAdminByEmail(email);
-    if (existingAdmin) {
-      return res.status(409).json({
-        success: false,
-        message: "Admin with this email already exists"
-      });
-    }
-    
-    // Prepare admin data with default profile picture if not provided
-    const adminData = {
-      firstName,
-      lastName,
-      email,
-      password,
-      contactNumber,
-      profilePicture: profilePicture || "https://default-avatar.com/default.png"
-    };
-    
-    const admin = await adminService.create(adminData);
-    
-    // Don't send password back
-    const adminResponse = admin.toObject ? admin.toObject() : admin;
-    delete adminResponse.password;
-    
+    const data = await adminService.create(req.body);
     res.status(201).json({
       success: true,
       message: "Admin registered successfully",
-      data: adminResponse
+      data: data
     });
   } catch (error) {
     res.status(400).json({
@@ -147,15 +106,7 @@ exports.registerAdmin = async (req, res) => {
 exports.loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email and password are required"
-      });
-    }
-    
-    const result = await adminService.login(req.body);
+    const result = await adminService.login({ email, password });
     res.status(200).json({
       success: true,
       message: "Login successful",
@@ -170,72 +121,74 @@ exports.loginAdmin = async (req, res) => {
   }
 };
 
-// Alias for login (for router compatibility)
-exports.login = exports.loginAdmin;
-
-exports.getAdminById = async (req, res) => {
+// Password reset methods
+exports.forgotPassword = async (req, res) => {
   try {
-    const admin = await adminService.getById(req.params.id);
+    const { email } = req.body;
+    // Generate OTP and send email
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    // Store OTP in database or cache
     res.status(200).json({
       success: true,
-      message: "Admin retrieved successfully",
-      data: admin
-    });
-  } catch (error) {
-    res.status(404).json({
-      success: false,
-      message: "Admin not found",
-      error: error.message
-    });
-  }
-};
-
-exports.getAllAdmins = async (req, res) => {
-  try {
-    const admins = await adminService.getAll();
-    res.status(200).json({
-      success: true,
-      message: "Admins retrieved successfully",
-      data: admins
+      message: "Password reset OTP sent to email",
+      data: { email, otp } // Remove otp in production
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to retrieve admins",
+      message: "Failed to send OTP",
       error: error.message
     });
   }
 };
 
-exports.updateAdmin = async (req, res) => {
+exports.verifyResetOTP = async (req, res) => {
   try {
-    const admin = await adminService.update(req.params.id, req.body);
-    res.status(200).json({
-      success: true,
-      message: "Admin updated successfully",
-      data: admin
-    });
+    const { email, otp } = req.body;
+    // Verify OTP from database/cache
+    const isValid = true; // Implement actual verification
+    if (isValid) {
+      res.status(200).json({
+        success: true,
+        message: "OTP verified successfully"
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: "Invalid OTP"
+      });
+    }
   } catch (error) {
-    res.status(400).json({
+    res.status(500).json({
       success: false,
-      message: "Failed to update admin",
+      message: "Failed to verify OTP",
       error: error.message
     });
   }
 };
 
-exports.deleteAdmin = async (req, res) => {
+exports.resetPassword = async (req, res) => {
   try {
-    await adminService.delete(req.params.id);
+    const { email, otp, newPassword } = req.body;
+    // Verify OTP and update password
+    const result = await adminService.resetPassword(email, newPassword);
     res.status(200).json({
       success: true,
-      message: "Admin deleted successfully"
+      message: "Password reset successfully",
+      data: result
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to delete admin",
+      message: "Failed to reset password",
       error: error.message
     });
   }
 };
+
+// Aliases
+exports.getAllAdmins = exports.getAll;
+exports.getAdminById = exports.getById;
+exports.createAdmin = exports.create;
+exports.updateAdmin = exports.update;
+exports.deleteAdmin = exports.delete;

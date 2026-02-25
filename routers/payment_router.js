@@ -1,155 +1,133 @@
 const express = require("express");
 const router = express.Router();
 const paymentController = require("../controllers/payment_controller");
+const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
  * tags:
  *   name: Payment
- *   description: Payment management endpoints
+ *   description: Payment management
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-const { authenticateToken } = require("../middlewares/auth");
-
-// Basic routes (customize based on actual controller functions)
-
-/**
- * @swagger
- * /api/v1/payment:
- *   get:
- *     tags:
- *       - Payment
- *     summary: Get all Payment records
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- */
-router.get("/", authenticateToken, paymentController.getAll || paymentController.getAllPayments);
-
-/**
- * @swagger
- * /api/v1/payment/{id}:
- *   get:
- *     tags:
- *       - Payment
- *     summary: Get Payment by ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *       404:
- *         description: Not found
- */
-router.get("/:id", authenticateToken, paymentController.getById || paymentController.getPaymentById);
-
-/**
- * @swagger
- * /api/v1/payment:
+ * /api/v1/payment/mobile-ecocash-paynow-me:
  *   post:
- *     tags:
- *       - Payment
- *     summary: Create new Payment
- *     security:
- *       - bearerAuth: []
+ *     tags: [Payment]
+ *     summary: Create mobile payment
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - student_id
+ *               - amount
+ *               - customerPhoneNumber
+ *             properties:
+ *               student_id:
+ *                 type: string
+ *               amount:
+ *                 type: number
+ *               description:
+ *                 type: string
+ *               customerPhoneNumber:
+ *                 type: string
  *     responses:
  *       201:
- *         description: Created
- *       400:
- *         description: Bad request
+ *         description: Payment initiated
  */
-router.post("/", authenticateToken, paymentController.create || paymentController.createPayment);
+router.post("/mobile-ecocash-paynow-me", paymentController.createMobilePayment);
 
 /**
  * @swagger
- * /api/v1/payment/{id}:
- *   put:
- *     tags:
- *       - Payment
- *     summary: Update Payment
+ * /api/v1/payment/getAllPayments:
+ *   get:
+ *     tags: [Payment]
+ *     summary: Get all payments
+ *     responses:
+ *       200:
+ *         description: List of payments
+ */
+router.get("/getAllPayments", paymentController.getAllPayments);
+
+/**
+ * @swagger
+ * /api/v1/payment/payments/{id}:
+ *   get:
+ *     tags: [Payment]
+ *     summary: Get payment by ID
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Payment details
+ */
+router.get("/payments/:id", paymentController.getPaymentById);
+
+/**
+ * @swagger
+ * /api/v1/payment/check-status:
+ *   post:
+ *     tags: [Payment]
+ *     summary: Check payment status
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - pollUrl
+ *             properties:
+ *               pollUrl:
+ *                 type: string
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Payment status
  */
-router.put("/:id", authenticateToken, paymentController.update || paymentController.updatePayment);
+router.post("/check-status", paymentController.checkPaymentStatus);
 
 /**
  * @swagger
- * /api/v1/payment/{id}:
+ * /api/v1/payment/status/{status}:
+ *   get:
+ *     tags: [Payment]
+ *     summary: Get payments by status
+ *     parameters:
+ *       - in: path
+ *         name: status
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Payments with status
+ */
+router.get("/status/:status", paymentController.getPaymentsByStatus);
+
+/**
+ * @swagger
+ * /api/v1/payment/delete/{id}:
  *   delete:
- *     tags:
- *       - Payment
- *     summary: Delete Payment
+ *     tags: [Payment]
+ *     summary: Delete payment
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Payment deleted
  */
-router.delete("/:id", authenticateToken, paymentController.delete || paymentController.deletePayment);
+router.delete("/delete/:id", paymentController.deletePayment);
 
-router.get('/', authenticateToken, paymentController.getAll);
-router.post('/', authenticateToken, paymentController.create);
 module.exports = router;

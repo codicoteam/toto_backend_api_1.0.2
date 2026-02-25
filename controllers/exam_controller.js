@@ -1,280 +1,19 @@
 const examService = require("../services/exam_service.js");
 
-// Create new exam
-exports.createExam = async (req, res) => {
-  try {
-    if (req.user && req.user.type === 'teacher') {
-      req.body.teacherId = req.user.id;
-    }
-    
-    const newExam = await examService.createExam(req.body);
-    
-    res.status(201).json({
-      success: true,
-      message: "Exam created successfully",
-      data: newExam,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Failed to create exam",
-      error: error.message,
-    });
-  }
-};
-
-// Get all exams
-exports.getAllExams = async (req, res) => {
-  try {
-    const filters = {};
-    if (req.query.teacherId) filters.teacherId = req.query.teacherId;
-    if (req.query.subject) filters.subject = req.query.subject;
-    if (req.query.Topic) filters.Topic = req.query.Topic;
-    if (req.query.level) filters.level = req.query.level;
-    if (req.query.isPublished !== undefined) filters.isPublished = req.query.isPublished === 'true';
-    
-    const exams = await examService.getAllExams(filters);
-    
-    res.status(200).json({
-      success: true,
-      message: "Exams retrieved successfully",
-      data: exams,
-      count: exams.length,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to retrieve exams",
-      error: error.message,
-    });
-  }
-};
-
-// Get exam by ID
-exports.getExamById = async (req, res) => {
-  try {
-    const exam = await examService.getExamById(req.params.id);
-    
-    res.status(200).json({
-      success: true,
-      message: "Exam retrieved successfully",
-      data: exam,
-    });
-  } catch (error) {
-    res.status(404).json({
-      success: false,
-      message: "Exam not found",
-      error: error.message,
-    });
-  }
-};
-
-// Update exam by ID
-exports.updateExam = async (req, res) => {
-  try {
-    if (req.user.type === 'teacher') {
-      const exam = await examService.getExamById(req.params.id);
-      if (exam.teacherId && exam.teacherId.toString() !== req.user.id) {
-        return res.status(403).json({
-          success: false,
-          message: "You can only update your own exams",
-        });
-      }
-    }
-    
-    const updatedExam = await examService.updateExam(req.params.id, req.body);
-    
-    res.status(200).json({
-      success: true,
-      message: "Exam updated successfully",
-      data: updatedExam,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Failed to update exam",
-      error: error.message,
-    });
-  }
-};
-
-// Delete exam by ID
-exports.deleteExam = async (req, res) => {
-  try {
-    if (req.user.type === 'teacher') {
-      const exam = await examService.getExamById(req.params.id);
-      if (exam.teacherId && exam.teacherId.toString() !== req.user.id) {
-        return res.status(403).json({
-          success: false,
-          message: "You can only delete your own exams",
-        });
-      }
-    }
-    
-    await examService.deleteExam(req.params.id);
-    
-    res.status(200).json({
-      success: true,
-      message: "Exam deleted successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to delete exam",
-      error: error.message,
-    });
-  }
-};
-
-// Get exams by teacher ID
-exports.getExamsByTeacherId = async (req, res) => {
-  try {
-    const exams = await examService.getExamsByTeacherId(req.params.teacherId);
-    
-    res.status(200).json({
-      success: true,
-      message: "Exams retrieved successfully",
-      data: exams,
-      count: exams.length,
-    });
-  } catch (error) {
-    res.status(404).json({
-      success: false,
-      message: "No exams found for this teacher",
-      error: error.message,
-    });
-  }
-};
-
-// Publish exam
-exports.publishExam = async (req, res) => {
-  try {
-    const exam = await examService.publishExam(req.params.id);
-    
-    res.status(200).json({
-      success: true,
-      message: "Exam published successfully",
-      data: exam,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Failed to publish exam",
-      error: error.message,
-    });
-  }
-};
-
-// Unpublish exam
-exports.unpublishExam = async (req, res) => {
-  try {
-    const exam = await examService.unpublishExam(req.params.id);
-    
-    res.status(200).json({
-      success: true,
-      message: "Exam unpublished successfully",
-      data: exam,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Failed to unpublish exam",
-      error: error.message,
-    });
-  }
-};
-
-// Get exam statistics
-exports.getExamStats = async (req, res) => {
-  try {
-    const stats = await examService.getExamStats(req.params.id);
-    
-    res.status(200).json({
-      success: true,
-      message: "Exam statistics retrieved successfully",
-      data: stats,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Failed to get exam statistics",
-      error: error.message,
-    });
-  }
-};
-
-// Add question to exam
-exports.addQuestion = async (req, res) => {
-  try {
-    const exam = await examService.addQuestion(req.params.id, req.body);
-    
-    res.status(200).json({
-      success: true,
-      message: "Question added successfully",
-      data: exam,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Failed to add question",
-      error: error.message,
-    });
-  }
-};
-
-// Update question
-exports.updateQuestion = async (req, res) => {
-  try {
-    const { examId, questionIndex } = req.params;
-    const exam = await examService.updateQuestion(examId, parseInt(questionIndex), req.body);
-    
-    res.status(200).json({
-      success: true,
-      message: "Question updated successfully",
-      data: exam,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Failed to update question",
-      error: error.message,
-    });
-  }
-};
-
-// Delete question
-exports.deleteQuestion = async (req, res) => {
-  try {
-    const { examId, questionIndex } = req.params;
-    const exam = await examService.deleteQuestion(examId, parseInt(questionIndex));
-    
-    res.status(200).json({
-      success: true,
-      message: "Question deleted successfully",
-      data: exam,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Failed to delete question",
-      error: error.message,
-    });
-  }
-};
-
-// Basic CRUD functions for router compatibility
+// Basic CRUD functions
 exports.getAll = async (req, res) => {
   try {
-    // TODO: Implement getAll logic
+    const data = await examService.getAll();
     res.status(200).json({
       success: true,
-      message: "Get all endpoint",
-      data: []
+      message: "Exam records retrieved successfully",
+      count: data.length,
+      data: data
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to retrieve data",
+      message: "Error retrieving exam",
       error: error.message
     });
   }
@@ -282,16 +21,16 @@ exports.getAll = async (req, res) => {
 
 exports.getById = async (req, res) => {
   try {
-    // TODO: Implement getById logic
+    const data = await examService.getById(req.params.id);
     res.status(200).json({
       success: true,
-      message: "Get by ID endpoint",
-      data: { id: req.params.id }
+      message: "Exam retrieved successfully",
+      data: data
     });
   } catch (error) {
     res.status(404).json({
       success: false,
-      message: "Data not found",
+      message: "Exam not found",
       error: error.message
     });
   }
@@ -299,16 +38,16 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    // TODO: Implement create logic
+    const data = await examService.create(req.body);
     res.status(201).json({
       success: true,
-      message: "Create endpoint",
-      data: req.body
+      message: "Exam created successfully",
+      data: data
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: "Failed to create data",
+      message: "Failed to create exam",
       error: error.message
     });
   }
@@ -316,16 +55,16 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    // TODO: Implement update logic
+    const data = await examService.update(req.params.id, req.body);
     res.status(200).json({
       success: true,
-      message: "Update endpoint",
-      data: { id: req.params.id, ...req.body }
+      message: "Exam updated successfully",
+      data: data
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: "Failed to update data",
+      message: "Failed to update exam",
       error: error.message
     });
   }
@@ -333,16 +72,23 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
   try {
-    // TODO: Implement delete logic
+    await examService.delete(req.params.id);
     res.status(200).json({
       success: true,
-      message: "Delete endpoint"
+      message: "Exam deleted successfully"
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to delete data",
+      message: "Failed to delete exam",
       error: error.message
     });
   }
 };
+
+// Aliases for compatibility
+exports.getAllExams = exports.getAll;
+exports.getExamById = exports.getById;
+exports.createExam = exports.create;
+exports.updateExam = exports.update;
+exports.deleteExam = exports.delete;

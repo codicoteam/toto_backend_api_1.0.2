@@ -7,41 +7,21 @@ const { authenticateToken } = require("../middlewares/auth");
  * @swagger
  * tags:
  *   name: Chat
- *   description: Chat management endpoints
+ *   description: Chat management
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-
-/**
- * @swagger
- * /api/v1/chat/:
+ * /api/v1/chat:
  *   get:
  *     tags: [Chat]
- *     summary: Get all Chat records
+ *     summary: Get all chat records
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
  */
-
 router.get("/", authenticateToken, chatController.getAll);
 
 /**
@@ -49,7 +29,7 @@ router.get("/", authenticateToken, chatController.getAll);
  * /api/v1/chat/{id}:
  *   get:
  *     tags: [Chat]
- *     summary: Get Chat by ID
+ *     summary: Get chat by ID
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -61,24 +41,15 @@ router.get("/", authenticateToken, chatController.getAll);
  *     responses:
  *       200:
  *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
  */
-
 router.get("/:id", authenticateToken, chatController.getById);
 
 /**
  * @swagger
- * /api/v1/chat/:
+ * /api/v1/chat:
  *   post:
  *     tags: [Chat]
- *     summary: Create new Chat
+ *     summary: Create new chat
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -88,18 +59,9 @@ router.get("/:id", authenticateToken, chatController.getById);
  *           schema:
  *             type: object
  *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *       201:
+ *         description: Created successfully
  */
-
 router.post("/", authenticateToken, chatController.create);
 
 /**
@@ -107,7 +69,7 @@ router.post("/", authenticateToken, chatController.create);
  * /api/v1/chat/{id}:
  *   put:
  *     tags: [Chat]
- *     summary: Update Chat
+ *     summary: Update chat
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -124,17 +86,8 @@ router.post("/", authenticateToken, chatController.create);
  *             type: object
  *     responses:
  *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *         description: Updated successfully
  */
-
 router.put("/:id", authenticateToken, chatController.update);
 
 /**
@@ -142,7 +95,7 @@ router.put("/:id", authenticateToken, chatController.update);
  * /api/v1/chat/{id}:
  *   delete:
  *     tags: [Chat]
- *     summary: Delete Chat
+ *     summary: Delete chat
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -153,19 +106,8 @@ router.put("/:id", authenticateToken, chatController.update);
  *           type: string
  *     responses:
  *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *         description: Deleted successfully
  */
-
 router.delete("/:id", authenticateToken, chatController.delete);
 
-router.get('/', authenticateToken, chatController.getAll);
-router.post('/', authenticateToken, chatController.create);
 module.exports = router;

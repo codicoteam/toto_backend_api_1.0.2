@@ -1,46 +1,31 @@
 const topicService = require("../services/topic_service.js");
 
-exports.createTopic = async (req, res) => {
+// Basic CRUD functions
+exports.getAll = async (req, res) => {
   try {
-    const topic = await topicService.createTopic(req.body);
-    res.status(201).json({
-      success: true,
-      message: "Topic created successfully",
-      data: topic
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Failed to create topic",
-      error: error.message
-    });
-  }
-};
-
-exports.getAllTopics = async (req, res) => {
-  try {
-    const topics = await topicService.getAllTopics();
+    const data = await topicService.getAll();
     res.status(200).json({
       success: true,
-      message: "Topics retrieved successfully",
-      data: topics
+      message: "Topic records retrieved successfully",
+      count: data.length,
+      data: data
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to retrieve topics",
+      message: "Error retrieving topic",
       error: error.message
     });
   }
 };
 
-exports.getTopicById = async (req, res) => {
+exports.getById = async (req, res) => {
   try {
-    const topic = await topicService.getTopicById(req.params.id);
+    const data = await topicService.getById(req.params.id);
     res.status(200).json({
       success: true,
       message: "Topic retrieved successfully",
-      data: topic
+      data: data
     });
   } catch (error) {
     res.status(404).json({
@@ -51,13 +36,30 @@ exports.getTopicById = async (req, res) => {
   }
 };
 
-exports.updateTopic = async (req, res) => {
+exports.create = async (req, res) => {
   try {
-    const topic = await topicService.updateTopic(req.params.id, req.body);
+    const data = await topicService.create(req.body);
+    res.status(201).json({
+      success: true,
+      message: "Topic created successfully",
+      data: data
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "Failed to create topic",
+      error: error.message
+    });
+  }
+};
+
+exports.update = async (req, res) => {
+  try {
+    const data = await topicService.update(req.params.id, req.body);
     res.status(200).json({
       success: true,
       message: "Topic updated successfully",
-      data: topic
+      data: data
     });
   } catch (error) {
     res.status(400).json({
@@ -68,9 +70,9 @@ exports.updateTopic = async (req, res) => {
   }
 };
 
-exports.deleteTopic = async (req, res) => {
+exports.delete = async (req, res) => {
   try {
-    await topicService.deleteTopic(req.params.id);
+    await topicService.delete(req.params.id);
     res.status(200).json({
       success: true,
       message: "Topic deleted successfully"
@@ -84,19 +86,9 @@ exports.deleteTopic = async (req, res) => {
   }
 };
 
-exports.getTopicsBySubject = async (req, res) => {
-  try {
-    const topics = await topicService.getTopicsBySubject(req.params.subjectId);
-    res.status(200).json({
-      success: true,
-      message: "Topics retrieved successfully",
-      data: topics
-    });
-  } catch (error) {
-    res.status(404).json({
-      success: false,
-      message: "No topics found for this subject",
-      error: error.message
-    });
-  }
-};
+// Aliases for compatibility
+exports.getAllTopics = exports.getAll;
+exports.getTopicById = exports.getById;
+exports.createTopic = exports.create;
+exports.updateTopic = exports.update;
+exports.deleteTopic = exports.delete;

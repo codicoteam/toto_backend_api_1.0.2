@@ -1,87 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const library_bookController = require("../controllers/library_book_controller");
+const bookController = require("../controllers/library_book_controller");
+const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
  * tags:
- *   name: Library
- *   description: Library management endpoints
+ *   name: LibraryBook
+ *   description: Library books management
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-const { authenticateToken } = require("../middlewares/auth");
-
-// Basic routes (customize based on actual controller functions)
-
-/**
- * @swagger
- * /api/v1/library:
- *   get:
- *     tags:
- *       - Library
- *     summary: Get all Library records
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- */
-router.get("/", authenticateToken, library_bookController.getAll || library_bookController.getAllLibrary_books);
-
-/**
- * @swagger
- * /api/v1/library/{id}:
- *   get:
- *     tags:
- *       - Library
- *     summary: Get Library by ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *       404:
- *         description: Not found
- */
-router.get("/:id", authenticateToken, library_bookController.getById || library_bookController.getLibrary_bookById);
-
-/**
- * @swagger
- * /api/v1/library:
+ * /api/v1/library_book/create:
  *   post:
- *     tags:
- *       - Library
- *     summary: Create new Library
+ *     tags: [LibraryBook]
+ *     summary: Create book
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -92,27 +26,78 @@ router.get("/:id", authenticateToken, library_bookController.getById || library_
  *             type: object
  *     responses:
  *       201:
- *         description: Created
- *       400:
- *         description: Bad request
+ *         description: Book created
  */
-router.post("/", authenticateToken, library_bookController.create || library_bookController.createLibrary_book);
+router.post("/create", authenticateToken, bookController.createBook);
 
 /**
  * @swagger
- * /api/v1/library/{id}:
- *   put:
- *     tags:
- *       - Library
- *     summary: Update Library
+ * /api/v1/library_book/getall:
+ *   get:
+ *     tags: [LibraryBook]
+ *     summary: Get all books
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of books
+ */
+router.get("/getall", authenticateToken, bookController.getAllBooks);
+
+/**
+ * @swagger
+ * /api/v1/library_book/get/{id}:
+ *   get:
+ *     tags: [LibraryBook]
+ *     summary: Get book by ID
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
+ *     responses:
+ *       200:
+ *         description: Book details
+ */
+router.get("/get/:id", authenticateToken, bookController.getBookById);
+
+/**
+ * @swagger
+ * /api/v1/library_book/get-by-subject/{subjectId}:
+ *   get:
+ *     tags: [LibraryBook]
+ *     summary: Get books by subject ID
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: subjectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Books for subject
+ */
+router.get("/get-by-subject/:subjectId", authenticateToken, bookController.getBooksBySubjectId);
+
+/**
+ * @swagger
+ * /api/v1/library_book/update/{id}:
+ *   put:
+ *     tags: [LibraryBook]
+ *     summary: Update book
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -121,35 +106,59 @@ router.post("/", authenticateToken, library_bookController.create || library_boo
  *             type: object
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Book updated
  */
-router.put("/:id", authenticateToken, library_bookController.update || library_bookController.updateLibrary_book);
+router.put("/update/:id", authenticateToken, bookController.updateBook);
 
 /**
  * @swagger
- * /api/v1/library/{id}:
+ * /api/v1/library_book/delete/{id}:
  *   delete:
- *     tags:
- *       - Library
- *     summary: Delete Library
+ *     tags: [LibraryBook]
+ *     summary: Delete book
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Book deleted
  */
-router.delete("/:id", authenticateToken, library_bookController.delete || library_bookController.deleteLibrary_book);
+router.delete("/delete/:id", authenticateToken, bookController.deleteBook);
 
-router.get('/', authenticateToken, library_bookController.getAll);
-router.post('/', authenticateToken, library_bookController.create);
+/**
+ * @swagger
+ * /api/v1/library_book/{bookId}/like:
+ *   post:
+ *     tags: [LibraryBook]
+ *     summary: Like book
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: bookId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - studentId
+ *             properties:
+ *               studentId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Book liked
+ */
+router.post("/:bookId/like", authenticateToken, bookController.likeBook);
+
 module.exports = router;

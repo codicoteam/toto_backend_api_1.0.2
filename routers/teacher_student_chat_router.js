@@ -1,84 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const teacher_student_chatController = require("../controllers/teacher_student_chat_controller");
+const chatController = require("../controllers/teacher_student_chat_controller");
 const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
  * tags:
- *   name: Chat
- *   description: Chat management endpoints
+ *   name: TeacherStudentChat
+ *   description: Teacher-student chat
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-
-/**
- * @swagger
- * /api/v1/teacher-student-chat/:
- *   get:
- *     tags: [Chat]
- *     summary: Get all Chat records
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-
-router.get("/", authenticateToken, teacher_student_chatController.getAll);
-
-/**
- * @swagger
- * /api/v1/teacher-student-chat/{id}:
- *   get:
- *     tags: [Chat]
- *     summary: Get Chat by ID
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-
-router.get("/:id", authenticateToken, teacher_student_chatController.getById);
-
-/**
- * @swagger
- * /api/v1/teacher-student-chat/:
+ * /api/v1/teacher-student-chat/create:
  *   post:
- *     tags: [Chat]
- *     summary: Create new Chat
+ *     tags: [TeacherStudentChat]
+ *     summary: Create chat message
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -87,85 +24,86 @@ router.get("/:id", authenticateToken, teacher_student_chatController.getById);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - senderId
+ *               - receiverId
+ *               - message
+ *             properties:
+ *               senderId:
+ *                 type: string
+ *               receiverId:
+ *                 type: string
+ *               message:
+ *                 type: string
  *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *       201:
+ *         description: Message sent
  */
-
-router.post("/", authenticateToken, teacher_student_chatController.create);
+router.post("/create", authenticateToken, chatController.createMessage);
 
 /**
  * @swagger
- * /api/v1/teacher-student-chat/{id}:
- *   put:
- *     tags: [Chat]
- *     summary: Update Chat
+ * /api/v1/teacher-student-chat/conversation/{userId1}/{userId2}:
+ *   get:
+ *     tags: [TeacherStudentChat]
+ *     summary: Get conversation between two users
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: userId1
  *         required: true
  *         schema:
  *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
+ *       - in: path
+ *         name: userId2
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *         description: Conversation history
  */
-
-router.put("/:id", authenticateToken, teacher_student_chatController.update);
+router.get("/conversation/:userId1/:userId2", authenticateToken, chatController.getConversation);
 
 /**
  * @swagger
- * /api/v1/teacher-student-chat/{id}:
+ * /api/v1/teacher-student-chat/user/{userId}:
+ *   get:
+ *     tags: [TeacherStudentChat]
+ *     summary: Get all chats for a user
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User's chats
+ */
+router.get("/user/:userId", authenticateToken, chatController.getUserChats);
+
+/**
+ * @swagger
+ * /api/v1/teacher-student-chat/message/{messageId}:
  *   delete:
- *     tags: [Chat]
- *     summary: Delete Chat
+ *     tags: [TeacherStudentChat]
+ *     summary: Delete message
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: messageId
  *         required: true
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *         description: Message deleted
  */
+router.delete("/message/:messageId", authenticateToken, chatController.deleteMessage);
 
-router.delete("/:id", authenticateToken, teacher_student_chatController.delete);
-
-router.get('/', authenticateToken, teacher_student_chatController.getAll);
-router.post('/', authenticateToken, teacher_student_chatController.create);
 module.exports = router;

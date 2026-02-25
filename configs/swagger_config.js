@@ -1,8 +1,7 @@
 const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 const setupSwagger = (app) => {
-  const swaggerUi = require('swagger-ui-express');
-  
   const options = {
     definition: {
       openapi: '3.0.0',
@@ -10,10 +9,6 @@ const setupSwagger = (app) => {
         title: 'Toto Academy Backend API',
         version: '1.0.2',
         description: 'Toto Academy Educational Platform API Documentation',
-        contact: {
-          name: 'Toto Academy Team',
-          email: 'support@totoacademy.com'
-        }
       },
       servers: [
         {
@@ -31,12 +26,6 @@ const setupSwagger = (app) => {
         { name: 'Teacher', description: 'Teacher operations' },
         { name: 'ContentSystem', description: 'Content system management' },
         { name: 'Topic', description: 'Topic management' },
-        { name: 'Exam', description: 'Examination management' },
-        { name: 'Community', description: 'Community features' },
-        { name: 'Payment', description: 'Payment processing' },
-        { name: 'Dashboard', description: 'Dashboard and analytics' },
-        { name: 'Chat', description: 'Chat and messaging' },
-        { name: 'Library', description: 'Library and books' }
       ],
       components: {
         securitySchemes: {
@@ -44,20 +33,23 @@ const setupSwagger = (app) => {
             type: 'http',
             scheme: 'bearer',
             bearerFormat: 'JWT',
-            description: 'Enter JWT token in format: Bearer <token>'
           }
         }
-      },
-      security: [{
-        bearerAuth: []
-      }]
+      }
     },
-    apis: ['./routers/*.js'],
+    apis: ['./routers/*.js'], // Path to your router files
   };
 
   const specs = swaggerJsdoc(options);
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-  console.log('í³˜ Swagger docs configured at /api-docs');
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+    explorer: true,
+    swaggerOptions: {
+      persistAuthorization: true,
+      displayRequestDuration: true,
+    }
+  }));
+  
+  console.log('í³˜ Swagger docs available at /api-docs');
 };
 
 module.exports = setupSwagger;

@@ -1,87 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const message_communityController = require("../controllers/message_community_controller");
+const messageController = require("../controllers/message_community_controller");
+const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
  * tags:
- *   name: Message
- *   description: Message management endpoints
+ *   name: MessageCommunity
+ *   description: Community messages
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-const { authenticateToken } = require("../middlewares/auth");
-
-// Basic CRUD routes
-
-/**
- * @swagger
- * /api/v1/message:
- *   get:
- *     tags:
- *       - Message
- *     summary: Get all Message records
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- */
-router.get("/", authenticateToken, message_communityController.getAll);
-
-/**
- * @swagger
- * /api/v1/message/{id}:
- *   get:
- *     tags:
- *       - Message
- *     summary: Get Message by ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *       404:
- *         description: Not found
- */
-router.get("/:id", authenticateToken, message_communityController.getById);
-
-/**
- * @swagger
- * /api/v1/message:
+ * /api/v1/message_community_route/create:
  *   post:
- *     tags:
- *       - Message
- *     summary: Create new Message
+ *     tags: [MessageCommunity]
+ *     summary: Create message
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -90,29 +24,101 @@ router.get("/:id", authenticateToken, message_communityController.getById);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - community
+ *               - sender
+ *               - message
+ *             properties:
+ *               community:
+ *                 type: string
+ *               sender:
+ *                 type: string
+ *               message:
+ *                 type: string
+ *               imagePath:
+ *                 type: array
+ *                 items:
+ *                   type: string
  *     responses:
  *       201:
- *         description: Created
- *       400:
- *         description: Bad request
+ *         description: Message created
  */
-router.post("/", authenticateToken, message_communityController.create);
+router.post("/create", authenticateToken, messageController.createMessage);
 
 /**
  * @swagger
- * /api/v1/message/{id}:
- *   put:
- *     tags:
- *       - Message
- *     summary: Update Message
+ * /api/v1/message_community_route/get/{id}:
+ *   get:
+ *     tags: [MessageCommunity]
+ *     summary: Get message by ID
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
+ *     responses:
+ *       200:
+ *         description: Message details
+ */
+router.get("/get/:id", authenticateToken, messageController.getMessageById);
+
+/**
+ * @swagger
+ * /api/v1/message_community_route/community/{communityId}:
+ *   get:
+ *     tags: [MessageCommunity]
+ *     summary: Get messages by community ID
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: communityId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Messages for community
+ */
+router.get("/community/:communityId", authenticateToken, messageController.getMessagesByCommunityId);
+
+/**
+ * @swagger
+ * /api/v1/message_community_route/delete/{id}:
+ *   delete:
+ *     tags: [MessageCommunity]
+ *     summary: Delete message
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Message deleted
+ */
+router.delete("/delete/:id", authenticateToken, messageController.deleteMessage);
+
+/**
+ * @swagger
+ * /api/v1/message_community_route/update/{id}:
+ *   put:
+ *     tags: [MessageCommunity]
+ *     summary: Update message
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -121,35 +127,28 @@ router.post("/", authenticateToken, message_communityController.create);
  *             type: object
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Message updated
  */
-router.put("/:id", authenticateToken, message_communityController.update);
+router.put("/update/:id", authenticateToken, messageController.updateMessage);
 
 /**
  * @swagger
- * /api/v1/message/{id}:
- *   delete:
- *     tags:
- *       - Message
- *     summary: Delete Message
+ * /api/v1/message_community_route/sender/{senderId}:
+ *   get:
+ *     tags: [MessageCommunity]
+ *     summary: Get messages by sender ID
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: senderId
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Messages from sender
  */
-router.delete("/:id", authenticateToken, message_communityController.delete);
+router.get("/sender/:senderId", authenticateToken, messageController.getMessagesBySenderId);
 
-router.get('/', authenticateToken, message_communityController.getAll);
-router.post('/', authenticateToken, message_communityController.create);
 module.exports = router;

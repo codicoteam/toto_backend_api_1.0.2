@@ -1,87 +1,55 @@
 const express = require("express");
 const router = express.Router();
 const student_topic_progressController = require("../controllers/student_topic_progress_controller");
+const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
  * tags:
- *   name: Progress
- *   description: Progress management endpoints
+ *   name: Student_topic_progress
+ *   description: Student_topic_progress management
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-const { authenticateToken } = require("../middlewares/auth");
-
-// Basic CRUD routes
-
-/**
- * @swagger
- * /api/v1/progress:
+ * /api/v1/student_topic_progress:
  *   get:
- *     tags:
- *       - Progress
- *     summary: Get all Progress records
+ *     tags: [Student_topic_progress]
+ *     summary: Get all student_topic_progress records
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Success
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
  */
 router.get("/", authenticateToken, student_topic_progressController.getAll);
 
 /**
  * @swagger
- * /api/v1/progress/{id}:
+ * /api/v1/student_topic_progress/{id}:
  *   get:
- *     tags:
- *       - Progress
- *     summary: Get Progress by ID
+ *     tags: [Student_topic_progress]
+ *     summary: Get student_topic_progress by ID
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Success
- *       404:
- *         description: Not found
  */
 router.get("/:id", authenticateToken, student_topic_progressController.getById);
 
 /**
  * @swagger
- * /api/v1/progress:
+ * /api/v1/student_topic_progress:
  *   post:
- *     tags:
- *       - Progress
- *     summary: Create new Progress
+ *     tags: [Student_topic_progress]
+ *     summary: Create new student_topic_progress
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -92,27 +60,24 @@ router.get("/:id", authenticateToken, student_topic_progressController.getById);
  *             type: object
  *     responses:
  *       201:
- *         description: Created
- *       400:
- *         description: Bad request
+ *         description: Created successfully
  */
 router.post("/", authenticateToken, student_topic_progressController.create);
 
 /**
  * @swagger
- * /api/v1/progress/{id}:
+ * /api/v1/student_topic_progress/{id}:
  *   put:
- *     tags:
- *       - Progress
- *     summary: Update Progress
+ *     tags: [Student_topic_progress]
+ *     summary: Update student_topic_progress
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -121,35 +86,28 @@ router.post("/", authenticateToken, student_topic_progressController.create);
  *             type: object
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Updated successfully
  */
 router.put("/:id", authenticateToken, student_topic_progressController.update);
 
 /**
  * @swagger
- * /api/v1/progress/{id}:
+ * /api/v1/student_topic_progress/{id}:
  *   delete:
- *     tags:
- *       - Progress
- *     summary: Delete Progress
+ *     tags: [Student_topic_progress]
+ *     summary: Delete student_topic_progress
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Deleted successfully
  */
 router.delete("/:id", authenticateToken, student_topic_progressController.delete);
 
-router.get('/', authenticateToken, student_topic_progressController.getAll);
-router.post('/', authenticateToken, student_topic_progressController.create);
 module.exports = router;

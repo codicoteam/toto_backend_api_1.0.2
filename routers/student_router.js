@@ -1,305 +1,212 @@
 const express = require("express");
 const router = express.Router();
 const studentController = require("../controllers/student_controller");
+const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
  * tags:
  *   name: Student
- *   description: Student management endpoints
+ *   description: Student management
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-const { authenticateToken } = require("../middlewares/auth");
-
-// Student login
-
-/**
- * @swagger
- * /api/v1/student:
+ * /api/v1/student_route/signup:
  *   post:
- *     tags:
- *       - Student
- *     summary: Create new Student
- *     security:
- *       - bearerAuth: []
+ *     tags: [Student]
+ *     summary: Student signup
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - firstName
+ *               - lastName
+ *               - email
+ *               - password
+ *               - phone_number
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *                 example: "Makaza"
+ *               lastName:
+ *                 type: string
+ *                 example: "Makza"
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "student@example.com"
+ *               phone_number:
+ *                 type: string
+ *                 example: "+263788647705"
+ *               password:
+ *                 type: string
+ *                 format: password
+ *               level:
+ *                 type: string
+ *                 example: "A Level"
+ *               address:
+ *                 type: string
+ *               school:
+ *                 type: string
+ *               subjects:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               subscription_status:
+ *                 type: string
+ *                 default: "active"
+ *               next_of_kin_full_name:
+ *                 type: string
+ *               next_of_kin_phone_number:
+ *                 type: string
  *     responses:
  *       201:
- *         description: Created
- *       400:
- *         description: Bad request
+ *         description: Student registered successfully
+ */
+router.post("/signup", studentController.registerStudent);
+
+/**
+ * @swagger
+ * /api/v1/student_route/login:
+ *   post:
+ *     tags: [Student]
+ *     summary: Student login
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       200:
+ *         description: Login successful
  */
 router.post("/login", studentController.loginStudent);
 
-// Student registration
-
 /**
  * @swagger
- * /api/v1/student:
+ * /api/v1/student_route/forgot_password:
  *   post:
- *     tags:
- *       - Student
- *     summary: Create new Student
- *     security:
- *       - bearerAuth: []
+ *     tags: [Student]
+ *     summary: Forgot password
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *     responses:
- *       201:
- *         description: Created
- *       400:
- *         description: Bad request
- */
-router.post("/register", studentController.registerStudent);
-
-// Get all students
-
-/**
- * @swagger
- * /api/v1/student:
- *   get:
- *     tags:
- *       - Student
- *     summary: Get all Student records
- *     security:
- *       - bearerAuth: []
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
  *     responses:
  *       200:
- *         description: Success
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
+ *         description: OTP sent
  */
-router.get("/", authenticateToken, studentController.getAllStudents);
-
-// Get student by ID
+router.post("/forgot_password", studentController.forgotPassword);
 
 /**
  * @swagger
- * /api/v1/student/{id}:
- *   get:
- *     tags:
- *       - Student
- *     summary: Get Student by ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *       404:
- *         description: Not found
- */
-router.get("/:id", authenticateToken, studentController.getStudentById);
-
-// Update student
-
-/**
- * @swagger
- * /api/v1/student/{id}:
- *   put:
- *     tags:
- *       - Student
- *     summary: Update Student
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       200:
- *         description: Success
- *       404:
- *         description: Not found
- */
-router.put("/:id", authenticateToken, studentController.updateStudent);
-
-// Delete student
-
-/**
- * @swagger
- * /api/v1/student/{id}:
- *   delete:
- *     tags:
- *       - Student
- *     summary: Delete Student
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *       404:
- *         description: Not found
- */
-router.delete("/:id", authenticateToken, studentController.deleteStudent);
-
-// Forgot password
-
-/**
- * @swagger
- * /api/v1/student:
+ * /api/v1/student_route/verify-reset-otp:
  *   post:
- *     tags:
- *       - Student
- *     summary: Create new Student
- *     security:
- *       - bearerAuth: []
+ *     tags: [Student]
+ *     summary: Verify reset OTP
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - email
+ *               - otp
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               otp:
+ *                 type: string
  *     responses:
- *       201:
- *         description: Created
- *       400:
- *         description: Bad request
- */
-router.post("/forgot-password", studentController.forgotPassword);
-
-// Verify reset OTP
-
-/**
- * @swagger
- * /api/v1/student:
- *   post:
- *     tags:
- *       - Student
- *     summary: Create new Student
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       201:
- *         description: Created
- *       400:
- *         description: Bad request
+ *       200:
+ *         description: OTP verified
  */
 router.post("/verify-reset-otp", studentController.verifyResetOTP);
 
-// Reset password
-
 /**
  * @swagger
- * /api/v1/student:
+ * /api/v1/student_route/reset-password:
  *   post:
- *     tags:
- *       - Student
- *     summary: Create new Student
- *     security:
- *       - bearerAuth: []
+ *     tags: [Student]
+ *     summary: Reset password
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - email
+ *               - otp
+ *               - newPassword
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               otp:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *                 format: password
  *     responses:
- *       201:
- *         description: Created
- *       400:
- *         description: Bad request
+ *       200:
+ *         description: Password reset
  */
 router.post("/reset-password", studentController.resetPassword);
 
-// Get student progress
-
 /**
  * @swagger
- * /api/v1/student/{id}:
+ * /api/v1/student_route/getallstudents:
  *   get:
- *     tags:
- *       - Student
- *     summary: Get Student by ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
+ *     tags: [Student]
+ *     summary: Get all students
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: List of students
  */
-router.get("/:id/progress", authenticateToken, studentController.getStudentProgress);
-
-// Update subscription
+router.get("/getallstudents", authenticateToken, studentController.getAllStudents);
 
 /**
  * @swagger
- * /api/v1/student/{id}:
+ * /api/v1/student_route/updatestudent/{id}:
  *   put:
- *     tags:
- *       - Student
- *     summary: Update Student
+ *     tags: [Student]
+ *     summary: Update student
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -308,74 +215,36 @@ router.get("/:id/progress", authenticateToken, studentController.getStudentProgr
  *             type: object
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Student updated
  */
-router.put("/:id/subscription", authenticateToken, studentController.updateSubscription);
-
-// Get student stats
+router.put("/updatestudent/:id", authenticateToken, studentController.updateStudent);
 
 /**
  * @swagger
- * /api/v1/student/{id}:
- *   get:
- *     tags:
- *       - Student
- *     summary: Get Student by ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *       404:
- *         description: Not found
- */
-router.get("/:id/stats", authenticateToken, studentController.getStudentStats);
-
-// Search students
-router.get("/search", authenticateToken, studentController.searchStudents);
-
-// Get current student profile
-router.get("/profile/me", authenticateToken, studentController.getCurrentStudent);
-
-// Update profile picture status (admin only)
-
-/**
- * @swagger
- * /api/v1/student/{id}:
- *   put:
- *     tags:
- *       - Student
- *     summary: Update Student
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     security:
- *       - bearerAuth: []
+ * /api/v1/student_route/verify-otp:
+ *   post:
+ *     tags: [Student]
+ *     summary: Verify OTP
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - phone_number
+ *               - otpCode
+ *             properties:
+ *               phone_number:
+ *                 type: string
+ *                 example: "+263712494841"
+ *               otpCode:
+ *                 type: string
+ *                 example: "123456"
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: OTP verified
  */
-router.put("/:id/profile-picture-status", authenticateToken, studentController.updateProfilePictureStatus);
+router.post("/verify-otp", studentController.verifyOTP);
 
-router.get('/', authenticateToken, studentController.getAll);
-router.post('/', authenticateToken, studentController.create);
 module.exports = router;

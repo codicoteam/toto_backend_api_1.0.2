@@ -7,136 +7,95 @@ const { authenticateToken } = require("../middlewares/auth");
  * @swagger
  * tags:
  *   name: Teacher
- *   description: Teacher management endpoints
+ *   description: Teacher management
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-
-/**
- * @swagger
- * /api/v1/teacher/registerTeacher:
+ * /api/v1/teacher_route/signup:
  *   post:
  *     tags: [Teacher]
- *     summary: registerTeacher
- *     security:
- *       - bearerAuth: []
+ *     summary: Teacher signup
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - firstName
+ *               - lastName
+ *               - email
+ *               - password
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *               phone_number:
+ *                 type: string
+ *               subjects:
+ *                 type: array
+ *                 items:
+ *                   type: string
  *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *       201:
+ *         description: Teacher registered
  */
-
-router.post("/registerTeacher", authenticateToken, teacherController.registerTeacher);
+router.post("/signup", teacherController.registerTeacher);
 
 /**
  * @swagger
- * /api/v1/teacher/loginTeacher:
+ * /api/v1/teacher_route/login:
  *   post:
  *     tags: [Teacher]
- *     summary: loginTeacher
- *     security:
- *       - bearerAuth: []
+ *     summary: Teacher login
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
  *     responses:
  *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *         description: Login successful
  */
-
-router.post("/loginTeacher", authenticateToken, teacherController.loginTeacher);
+router.post("/login", teacherController.loginTeacher);
 
 /**
  * @swagger
- * /api/v1/teacher/:
+ * /api/v1/teacher_route/getallteachers:
  *   get:
  *     tags: [Teacher]
- *     summary: Get all Teacher records
+ *     summary: Get all teachers
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *         description: List of teachers
  */
-
-router.get("/", authenticateToken, teacherController.getAllTeachers);
+router.get("/getallteachers", authenticateToken, teacherController.getAllTeachers);
 
 /**
  * @swagger
- * /api/v1/teacher/{id}:
- *   get:
- *     tags: [Teacher]
- *     summary: Get Teacher by ID
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-
-router.get("/:id", authenticateToken, teacherController.getTeacherById);
-
-/**
- * @swagger
- * /api/v1/teacher/{id}:
+ * /api/v1/teacher_route/updateteacher/{id}:
  *   put:
  *     tags: [Teacher]
- *     summary: Update Teacher
+ *     summary: Update teacher
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -153,25 +112,16 @@ router.get("/:id", authenticateToken, teacherController.getTeacherById);
  *             type: object
  *     responses:
  *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *         description: Teacher updated
  */
-
-router.put("/:id", authenticateToken, teacherController.updateTeacher);
+router.put("/updateteacher/:id", authenticateToken, teacherController.updateTeacher);
 
 /**
  * @swagger
- * /api/v1/teacher/{id}:
+ * /api/v1/teacher_route/deleteteacher/{id}:
  *   delete:
  *     tags: [Teacher]
- *     summary: Delete Teacher
+ *     summary: Delete teacher
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -182,326 +132,8 @@ router.put("/:id", authenticateToken, teacherController.updateTeacher);
  *           type: string
  *     responses:
  *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *         description: Teacher deleted
  */
+router.delete("/deleteteacher/:id", authenticateToken, teacherController.deleteTeacher);
 
-router.delete("/:id", authenticateToken, teacherController.deleteTeacher);
-
-/**
- * @swagger
- * /api/v1/teacher/activateTeacher:
- *   post:
- *     tags: [Teacher]
- *     summary: activateTeacher
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-
-router.post("/activateTeacher", authenticateToken, teacherController.activateTeacher);
-
-/**
- * @swagger
- * /api/v1/teacher/forgotPassword:
- *   post:
- *     tags: [Teacher]
- *     summary: forgotPassword
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-
-router.post("/forgotPassword", authenticateToken, teacherController.forgotPassword);
-
-/**
- * @swagger
- * /api/v1/teacher/verifyResetOTP:
- *   post:
- *     tags: [Teacher]
- *     summary: verifyResetOTP
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-
-router.post("/verifyResetOTP", authenticateToken, teacherController.verifyResetOTP);
-
-/**
- * @swagger
- * /api/v1/teacher/resetPassword:
- *   post:
- *     tags: [Teacher]
- *     summary: resetPassword
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-
-router.post("/resetPassword", authenticateToken, teacherController.resetPassword);
-
-/**
- * @swagger
- * /api/v1/teacher/TeacherStats:
- *   get:
- *     tags: [Teacher]
- *     summary: getTeacherStats
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-
-router.get("/TeacherStats", authenticateToken, teacherController.getTeacherStats);
-
-/**
- * @swagger
- * /api/v1/teacher/CurrentTeacher:
- *   get:
- *     tags: [Teacher]
- *     summary: getCurrentTeacher
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-
-router.get("/CurrentTeacher", authenticateToken, teacherController.getCurrentTeacher);
-
-/**
- * @swagger
- * /api/v1/teacher/:
- *   get:
- *     tags: [Teacher]
- *     summary: Get all Teacher records
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-
-router.get("/", authenticateToken, teacherController.getAll);
-
-/**
- * @swagger
- * /api/v1/teacher/{id}:
- *   get:
- *     tags: [Teacher]
- *     summary: Get Teacher by ID
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-
-router.get("/:id", authenticateToken, teacherController.getById);
-
-/**
- * @swagger
- * /api/v1/teacher/:
- *   post:
- *     tags: [Teacher]
- *     summary: Create new Teacher
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-
-router.post("/", authenticateToken, teacherController.create);
-
-/**
- * @swagger
- * /api/v1/teacher/{id}:
- *   put:
- *     tags: [Teacher]
- *     summary: Update Teacher
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-
-router.put("/:id", authenticateToken, teacherController.update);
-
-/**
- * @swagger
- * /api/v1/teacher/{id}:
- *   delete:
- *     tags: [Teacher]
- *     summary: Delete Teacher
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-
-router.delete("/:id", authenticateToken, teacherController.delete);
-
-router.get('/', authenticateToken, teacherController.getAll);
-router.post('/', authenticateToken, teacherController.create);
 module.exports = router;

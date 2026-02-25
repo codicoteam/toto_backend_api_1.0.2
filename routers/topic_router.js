@@ -7,47 +7,49 @@ const { authenticateToken } = require("../middlewares/auth");
  * @swagger
  * tags:
  *   name: Topic
- *   description: Topic management endpoints
+ *   description: Topic management
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-/**
- * @swagger
- * /api/v1/topic/:
+ * /api/v1/topic:
  *   get:
  *     tags: [Topic]
- *     summary: Get all topics (getAllTopics)
+ *     summary: Get all topic records
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
  */
 router.get("/", authenticateToken, topicController.getAllTopics);
 
 /**
  * @swagger
- * /api/v1/topic/:
+ * /api/v1/topic/{id}:
+ *   get:
+ *     tags: [Topic]
+ *     summary: Get topic by ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+router.get("/:id", authenticateToken, topicController.getTopicById);
+
+/**
+ * @swagger
+ * /api/v1/topic:
  *   post:
  *     tags: [Topic]
- *     summary: Create new topic (createTopic)
+ *     summary: Create new topic
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -57,53 +59,17 @@ router.get("/", authenticateToken, topicController.getAllTopics);
  *           schema:
  *             type: object
  *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *       201:
+ *         description: Created successfully
  */
 router.post("/", authenticateToken, topicController.createTopic);
 
 /**
  * @swagger
  * /api/v1/topic/{id}:
- *   get:
- *     tags: [Topic]
- *     summary: Get topic by ID (getTopicById)
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-router.get("/:id", authenticateToken, topicController.getTopicById);
-
-/**
- * @swagger
- * /api/v1/topic/{id}:
  *   put:
  *     tags: [Topic]
- *     summary: Update topic (updateTopic)
+ *     summary: Update topic
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -120,15 +86,7 @@ router.get("/:id", authenticateToken, topicController.getTopicById);
  *             type: object
  *     responses:
  *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *         description: Updated successfully
  */
 router.put("/:id", authenticateToken, topicController.updateTopic);
 
@@ -137,7 +95,7 @@ router.put("/:id", authenticateToken, topicController.updateTopic);
  * /api/v1/topic/{id}:
  *   delete:
  *     tags: [Topic]
- *     summary: Delete topic (deleteTopic)
+ *     summary: Delete topic
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -148,15 +106,7 @@ router.put("/:id", authenticateToken, topicController.updateTopic);
  *           type: string
  *     responses:
  *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *         description: Deleted successfully
  */
 router.delete("/:id", authenticateToken, topicController.deleteTopic);
 

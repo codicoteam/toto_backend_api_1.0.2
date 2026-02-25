@@ -1,17 +1,19 @@
 const chatService = require("../services/chat_service.js");
 
+// Basic CRUD functions
 exports.getAll = async (req, res) => {
   try {
     const data = await chatService.getAll();
     res.status(200).json({
       success: true,
-      message: "Chats retrieved successfully",
+      message: "Chat records retrieved successfully",
+      count: data.length,
       data: data
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to retrieve chats",
+      message: "Error retrieving chat",
       error: error.message
     });
   }
@@ -83,3 +85,10 @@ exports.delete = async (req, res) => {
     });
   }
 };
+
+// Aliases for compatibility
+exports.getAllChats = exports.getAll;
+exports.getChatById = exports.getById;
+exports.createChat = exports.create;
+exports.updateChat = exports.update;
+exports.deleteChat = exports.delete;

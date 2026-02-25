@@ -1,65 +1,57 @@
-const Exam = require('../models/exam_model');
+const Exam = require("../models/exam_model.js");
 
-// Get all exam records
-exports.getAll = async (filters = {}) => {
-    try {
-        const data = await Exam.find(filters);
-        return data;
-    } catch (error) {
-        throw new Error(`Failed to retrieve exam records: ${error.message}`);
-    }
+// Basic CRUD operations
+exports.getAll = async () => {
+  try {
+    const items = await Exam.find();
+    return items;
+  } catch (error) {
+    throw new Error("Failed to fetch exam: " + error.message);
+  }
 };
 
-// Get exam by ID
 exports.getById = async (id) => {
-    try {
-        const data = await Exam.findById(id);
-        if (!data) {
-            throw new Error('Exam not found');
-        }
-        return data;
-    } catch (error) {
-        throw new Error(`Failed to retrieve exam: ${error.message}`);
-    }
+  try {
+    const item = await Exam.findById(id);
+    if (!item) throw new Error("Exam not found");
+    return item;
+  } catch (error) {
+    throw new Error("Failed to fetch exam: " + error.message);
+  }
 };
 
-// Create new exam
 exports.create = async (data) => {
-    try {
-        const newData = new Exam(data);
-        const savedData = await newData.save();
-        return savedData;
-    } catch (error) {
-        throw new Error(`Failed to create exam: ${error.message}`);
-    }
+  try {
+    const item = new Exam(data);
+    return await item.save();
+  } catch (error) {
+    throw new Error("Failed to create exam: " + error.message);
+  }
 };
 
-// Update exam
-exports.update = async (id, updateData) => {
-    try {
-        const updatedData = await Exam.findByIdAndUpdate(
-            id,
-            updateData,
-            { new: true, runValidators: true }
-        );
-        if (!updatedData) {
-            throw new Error('Exam not found');
-        }
-        return updatedData;
-    } catch (error) {
-        throw new Error(`Failed to update exam: ${error.message}`);
-    }
+exports.update = async (id, data) => {
+  try {
+    const item = await Exam.findByIdAndUpdate(id, data, { new: true });
+    if (!item) throw new Error("Exam not found");
+    return item;
+  } catch (error) {
+    throw new Error("Failed to update exam: " + error.message);
+  }
 };
 
-// Delete exam
 exports.delete = async (id) => {
-    try {
-        const deletedData = await Exam.findByIdAndDelete(id);
-        if (!deletedData) {
-            throw new Error('Exam not found');
-        }
-        return deletedData;
-    } catch (error) {
-        throw new Error(`Failed to delete exam: ${error.message}`);
-    }
+  try {
+    const item = await Exam.findByIdAndDelete(id);
+    if (!item) throw new Error("Exam not found");
+    return { message: "Exam deleted successfully" };
+  } catch (error) {
+    throw new Error("Failed to delete exam: " + error.message);
+  }
 };
+
+// Aliases for compatibility
+exports.getAllExams = exports.getAll;
+exports.getExamById = exports.getById;
+exports.createExam = exports.create;
+exports.updateExam = exports.update;
+exports.deleteExam = exports.delete;

@@ -1,119 +1,99 @@
 const express = require("express");
 const router = express.Router();
 const communityController = require("../controllers/community_controller");
+const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
  * tags:
  *   name: Community
- *   description: Community management endpoints
+ *   description: Community management
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-const { authenticateToken } = require("../middlewares/auth");
-
-// Community routes based on actual controller functions
-
-/**
- * @swagger
- * /api/v1/community:
- *   get:
- *     tags:
- *       - Community
- *     summary: Get all Community records
+ * /api/v1/community_service/create:
+ *   post:
+ *     tags: [Community]
+ *     summary: Create community
  *     security:
  *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - subject
+ *             properties:
+ *               name:
+ *                 type: string
+ *               profilePicture:
+ *                 type: string
+ *               subject:
+ *                 type: string
+ *               Level:
+ *                 type: string
+ *               students:
+ *                 type: array
+ *                 items:
  *                   type: string
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
+ *     responses:
+ *       201:
+ *         description: Community created
  */
-router.get("/", authenticateToken, communityController.getAllCommunities);
-router.get("/user", authenticateToken, communityController.getUserCommunities);
+router.post("/create", authenticateToken, communityController.createCommunity);
 
 /**
  * @swagger
- * /api/v1/community/{id}:
+ * /api/v1/community_service/getall:
  *   get:
- *     tags:
- *       - Community
- *     summary: Get Community by ID
+ *     tags: [Community]
+ *     summary: Get all communities
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of communities
+ */
+router.get("/getall", authenticateToken, communityController.getAllCommunities);
+
+/**
+ * @swagger
+ * /api/v1/community_service/get/{id}:
+ *   get:
+ *     tags: [Community]
+ *     summary: Get community by ID
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Community details
  */
-router.get("/:id", authenticateToken, communityController.getCommunityById);
+router.get("/get/:id", authenticateToken, communityController.getCommunityById);
 
 /**
  * @swagger
- * /api/v1/community:
- *   post:
- *     tags:
- *       - Community
- *     summary: Create new Community
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       201:
- *         description: Created
- *       400:
- *         description: Bad request
- */
-router.post("/", authenticateToken, communityController.createCommunity);
-
-/**
- * @swagger
- * /api/v1/community/{id}:
+ * /api/v1/community_service/update/{id}:
  *   put:
- *     tags:
- *       - Community
- *     summary: Update Community
+ *     tags: [Community]
+ *     summary: Update community
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -122,242 +102,110 @@ router.post("/", authenticateToken, communityController.createCommunity);
  *             type: object
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Community updated
  */
-router.put("/:id", authenticateToken, communityController.updateCommunity);
+router.put("/update/:id", authenticateToken, communityController.updateCommunity);
 
 /**
  * @swagger
- * /api/v1/community/{id}:
+ * /api/v1/community_service/delete/{id}:
  *   delete:
- *     tags:
- *       - Community
- *     summary: Delete Community
+ *     tags: [Community]
+ *     summary: Delete community
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Community deleted
  */
-router.delete("/:id", authenticateToken, communityController.deleteCommunity);
+router.delete("/delete/:id", authenticateToken, communityController.deleteCommunity);
 
 /**
  * @swagger
- * /api/v1/community:
+ * /api/v1/community_service/join/{communityId}:
  *   post:
- *     tags:
- *       - Community
- *     summary: Create new Community
+ *     tags: [Community]
+ *     summary: Join community
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       201:
- *         description: Created
- *       400:
- *         description: Bad request
- */
-router.post("/:id/join", authenticateToken, communityController.joinCommunity);
-
-/**
- * @swagger
- * /api/v1/community:
- *   post:
- *     tags:
- *       - Community
- *     summary: Create new Community
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       201:
- *         description: Created
- *       400:
- *         description: Bad request
- */
-router.post("/:id/leave", authenticateToken, communityController.leaveCommunity);
-
-/**
- * @swagger
- * /api/v1/community:
- *   post:
- *     tags:
- *       - Community
- *     summary: Create new Community
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       201:
- *         description: Created
- *       400:
- *         description: Bad request
- */
-router.post("/:id/admin", authenticateToken, communityController.addAdmin);
-
-/**
- * @swagger
- * /api/v1/community/{id}:
- *   delete:
- *     tags:
- *       - Community
- *     summary: Delete Community
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: communityId
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - studentId
+ *             properties:
+ *               studentId:
+ *                 type: string
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Joined community
  */
-router.delete("/:id/admin", authenticateToken, communityController.removeAdmin);
+router.post("/join/:communityId", authenticateToken, communityController.joinCommunity);
 
 /**
  * @swagger
- * /api/v1/community:
+ * /api/v1/community_service/leave/{communityId}:
  *   post:
- *     tags:
- *       - Community
- *     summary: Create new Community
+ *     tags: [Community]
+ *     summary: Leave community
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: communityId
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - studentId
+ *             properties:
+ *               studentId:
+ *                 type: string
  *     responses:
- *       201:
- *         description: Created
- *       400:
- *         description: Bad request
+ *       200:
+ *         description: Left community
  */
-router.post("/:id/post", authenticateToken, communityController.createPost);
+router.post("/leave/:communityId", authenticateToken, communityController.leaveCommunity);
 
 /**
  * @swagger
- * /api/v1/community:
- *   post:
- *     tags:
- *       - Community
- *     summary: Create new Community
+ * /api/v1/community_service/subject/{subjectId}:
+ *   get:
+ *     tags: [Community]
+ *     summary: Get communities by subject ID
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
+ *     parameters:
+ *       - in: path
+ *         name: subjectId
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
- *       201:
- *         description: Created
- *       400:
- *         description: Bad request
+ *       200:
+ *         description: Communities for subject
  */
-router.post("/:id/post/:postIndex/like", authenticateToken, communityController.likePost);
+router.get("/subject/:subjectId", authenticateToken, communityController.getCommunitiesBySubjectId);
 
-/**
- * @swagger
- * /api/v1/community:
- *   post:
- *     tags:
- *       - Community
- *     summary: Create new Community
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       201:
- *         description: Created
- *       400:
- *         description: Bad request
- */
-router.post("/:id/post/:postIndex/unlike", authenticateToken, communityController.unlikePost);
-
-/**
- * @swagger
- * /api/v1/community:
- *   post:
- *     tags:
- *       - Community
- *     summary: Create new Community
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       201:
- *         description: Created
- *       400:
- *         description: Bad request
- */
-router.post("/:id/post/:postIndex/comment", authenticateToken, communityController.addComment);
-
-/**
- * @swagger
- * /api/v1/community:
- *   post:
- *     tags:
- *       - Community
- *     summary: Create new Community
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       201:
- *         description: Created
- *       400:
- *         description: Bad request
- */
-router.post("/:id/post/:postIndex/comment/:commentIndex/reply", authenticateToken, communityController.addReplyToComment);
-
-router.get('/', authenticateToken, communityController.getAll);
-router.post('/', authenticateToken, communityController.create);
 module.exports = router;

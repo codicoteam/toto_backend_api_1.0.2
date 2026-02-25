@@ -1,86 +1,72 @@
-const comment_topic_contentService = require("../services/comment_topic_content_service.js");
+const commentService = require("../services/comment_topic_content_service");
 
-// Basic CRUD operations
+// Basic CRUD
 exports.getAll = async (req, res) => {
   try {
-    const data = await comment_topic_contentService.getAll();
-    res.status(200).json({
-      success: true,
-      message: "Data retrieved successfully",
-      data: data
-    });
+    const data = await commentService.getAll();
+    res.status(200).json({ success: true, message: "Comments retrieved", data });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to retrieve data",
-      error: error.message
-    });
+    res.status(500).json({ success: false, error: error.message });
   }
 };
 
 exports.getById = async (req, res) => {
   try {
-    const data = await comment_topic_contentService.getById(req.params.id);
-    res.status(200).json({
-      success: true,
-      message: "Data retrieved successfully",
-      data: data
-    });
+    const data = await commentService.getById(req.params.id);
+    res.status(200).json({ success: true, message: "Comment retrieved", data });
   } catch (error) {
-    res.status(404).json({
-      success: false,
-      message: "Data not found",
-      error: error.message
-    });
+    res.status(404).json({ success: false, error: error.message });
   }
 };
 
 exports.create = async (req, res) => {
   try {
-    const data = await comment_topic_contentService.create(req.body);
-    res.status(201).json({
-      success: true,
-      message: "Data created successfully",
-      data: data
-    });
+    const data = await commentService.create(req.body);
+    res.status(201).json({ success: true, message: "Comment created", data });
   } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Failed to create data",
-      error: error.message
-    });
+    res.status(400).json({ success: false, error: error.message });
   }
 };
 
 exports.update = async (req, res) => {
   try {
-    const data = await comment_topic_contentService.update(req.params.id, req.body);
-    res.status(200).json({
-      success: true,
-      message: "Data updated successfully",
-      data: data
-    });
+    const data = await commentService.update(req.params.id, req.body);
+    res.status(200).json({ success: true, message: "Comment updated", data });
   } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: "Failed to update data",
-      error: error.message
-    });
+    res.status(400).json({ success: false, error: error.message });
   }
 };
 
 exports.delete = async (req, res) => {
   try {
-    await comment_topic_contentService.delete(req.params.id);
-    res.status(200).json({
-      success: true,
-      message: "Data deleted successfully"
-    });
+    await commentService.delete(req.params.id);
+    res.status(200).json({ success: true, message: "Comment deleted" });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to delete data",
-      error: error.message
-    });
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+// Additional methods that match the router expectations
+exports.createComment = exports.create;
+exports.updateComment = exports.update;
+exports.deleteComment = exports.delete;
+exports.getAllComments = exports.getAll;
+exports.getCommentById = exports.getById;
+
+exports.getCommentsByTopicContentId = async (req, res) => {
+  try {
+    const data = await commentService.getByTopicContentId(req.params.topicContentId);
+    res.status(200).json({ success: true, message: "Comments retrieved", data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+exports.deleteCommentsByTopicContentId = async (req, res) => {
+  try {
+    await commentService.deleteByTopicContentId(req.params.topicContentId);
+    res.status(200).json({ success: true, message: "Comments deleted" });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
   }
 };

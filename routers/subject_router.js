@@ -1,88 +1,21 @@
-
 const express = require("express");
 const router = express.Router();
 const subjectController = require("../controllers/subject_controller");
+const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
  * tags:
  *   name: Subject
- *   description: Subject management endpoints
+ *   description: Subject management
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-const { authenticateToken } = require("../middlewares/auth");
-
-// Basic CRUD routes
-
-/**
- * @swagger
- * /api/v1/subject:
- *   get:
- *     tags:
- *       - Subject
- *     summary: Get all Subject records
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- */
-router.get("/", authenticateToken, subjectController.getAll);
-
-/**
- * @swagger
- * /api/v1/subject/{id}:
- *   get:
- *     tags:
- *       - Subject
- *     summary: Get Subject by ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *       404:
- *         description: Not found
- */
-router.get("/:id", authenticateToken, subjectController.getById);
-
-/**
- * @swagger
- * /api/v1/subject:
+ * /api/v1/subject/create:
  *   post:
- *     tags:
- *       - Subject
- *     summary: Create new Subject
+ *     tags: [Subject]
+ *     summary: Create subject
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -91,66 +24,111 @@ router.get("/:id", authenticateToken, subjectController.getById);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - subjectName
+ *             properties:
+ *               subjectName:
+ *                 type: string
+ *                 example: "Physics"
+ *               imageUrl:
+ *                 type: string
+ *               Level:
+ *                 type: string
+ *                 example: "A Level"
+ *               showSubject:
+ *                 type: boolean
+ *                 default: true
  *     responses:
  *       201:
- *         description: Created
- *       400:
- *         description: Bad request
+ *         description: Subject created
  */
-router.post("/", authenticateToken, subjectController.create);
+router.post("/create", authenticateToken, subjectController.createSubject);
 
 /**
  * @swagger
- * /api/v1/subject/{id}:
- *   put:
- *     tags:
- *       - Subject
- *     summary: Update Subject
+ * /api/v1/subject/getall:
+ *   get:
+ *     tags: [Subject]
+ *     summary: Get all subjects
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of subjects
+ */
+router.get("/getall", authenticateToken, subjectController.getAllSubjects);
+
+/**
+ * @swagger
+ * /api/v1/subject/get/{id}:
+ *   get:
+ *     tags: [Subject]
+ *     summary: Get subject by ID
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
+ *     responses:
+ *       200:
+ *         description: Subject details
+ */
+router.get("/get/:id", authenticateToken, subjectController.getSubjectById);
+
+/**
+ * @swagger
+ * /api/v1/subject/update/{id}:
+ *   put:
+ *     tags: [Subject]
+ *     summary: Update subject
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             properties:
+ *               subjectName:
+ *                 type: string
+ *               Level:
+ *                 type: string
+ *               showSubject:
+ *                 type: boolean
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Subject updated
  */
-router.put("/:id", authenticateToken, subjectController.update);
+router.put("/update/:id", authenticateToken, subjectController.updateSubject);
 
 /**
  * @swagger
- * /api/v1/subject/{id}:
+ * /api/v1/subject/delete/{id}:
  *   delete:
- *     tags:
- *       - Subject
- *     summary: Delete Subject
+ *     tags: [Subject]
+ *     summary: Delete subject
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Subject deleted
  */
-router.delete("/:id", authenticateToken, subjectController.delete);
+router.delete("/delete/:id", authenticateToken, subjectController.deleteSubject);
 
-router.get('/', authenticateToken, subjectController.getAll);
-router.post('/', authenticateToken, subjectController.create);
 module.exports = router;

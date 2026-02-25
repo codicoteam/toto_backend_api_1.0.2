@@ -1,18 +1,19 @@
 const student_topic_progressService = require("../services/student_topic_progress_service.js");
 
-// Basic CRUD operations
+// Basic CRUD functions
 exports.getAll = async (req, res) => {
   try {
     const data = await student_topic_progressService.getAll();
     res.status(200).json({
       success: true,
-      message: "Data retrieved successfully",
+      message: "Student_topic_progress records retrieved successfully",
+      count: data.length,
       data: data
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to retrieve data",
+      message: "Error retrieving student_topic_progress",
       error: error.message
     });
   }
@@ -23,13 +24,13 @@ exports.getById = async (req, res) => {
     const data = await student_topic_progressService.getById(req.params.id);
     res.status(200).json({
       success: true,
-      message: "Data retrieved successfully",
+      message: "Student_topic_progress retrieved successfully",
       data: data
     });
   } catch (error) {
     res.status(404).json({
       success: false,
-      message: "Data not found",
+      message: "Student_topic_progress not found",
       error: error.message
     });
   }
@@ -40,13 +41,13 @@ exports.create = async (req, res) => {
     const data = await student_topic_progressService.create(req.body);
     res.status(201).json({
       success: true,
-      message: "Data created successfully",
+      message: "Student_topic_progress created successfully",
       data: data
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: "Failed to create data",
+      message: "Failed to create student_topic_progress",
       error: error.message
     });
   }
@@ -57,13 +58,13 @@ exports.update = async (req, res) => {
     const data = await student_topic_progressService.update(req.params.id, req.body);
     res.status(200).json({
       success: true,
-      message: "Data updated successfully",
+      message: "Student_topic_progress updated successfully",
       data: data
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: "Failed to update data",
+      message: "Failed to update student_topic_progress",
       error: error.message
     });
   }
@@ -74,13 +75,20 @@ exports.delete = async (req, res) => {
     await student_topic_progressService.delete(req.params.id);
     res.status(200).json({
       success: true,
-      message: "Data deleted successfully"
+      message: "Student_topic_progress deleted successfully"
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to delete data",
+      message: "Failed to delete student_topic_progress",
       error: error.message
     });
   }
 };
+
+// Aliases for compatibility
+exports.getAllStudent_topic_progresss = exports.getAll;
+exports.getStudent_topic_progressById = exports.getById;
+exports.createStudent_topic_progress = exports.create;
+exports.updateStudent_topic_progress = exports.update;
+exports.deleteStudent_topic_progress = exports.delete;

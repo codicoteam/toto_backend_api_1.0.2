@@ -1,53 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const contentSystemController = require("../controllers/content_system_controller");
+const contentController = require("../controllers/content_system_controller");
 const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
  * tags:
  *   name: ContentSystem
- *   description: Content System management endpoints
+ *   description: Content system management
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-/**
- * @swagger
- * /api/v1/content-system/:
- *   get:
- *     tags: [ContentSystem]
- *     summary: Get all content systems
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
- */
-router.get("/", authenticateToken, contentSystemController.getAll);
-
-/**
- * @swagger
- * /api/v1/content-system/:
+ * /api/v1/content_system/create:
  *   post:
  *     tags: [ContentSystem]
- *     summary: Create new content system
+ *     summary: Create content
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -57,25 +25,31 @@ router.get("/", authenticateToken, contentSystemController.getAll);
  *           schema:
  *             type: object
  *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *       201:
+ *         description: Content created
  */
-router.post("/", authenticateToken, contentSystemController.create);
+router.post("/create", authenticateToken, contentController.createContent);
 
 /**
  * @swagger
- * /api/v1/content-system/{id}:
+ * /api/v1/content_system/getall:
  *   get:
  *     tags: [ContentSystem]
- *     summary: Get content system by ID
+ *     summary: Get all content
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of content
+ */
+router.get("/getall", authenticateToken, contentController.getAllContent);
+
+/**
+ * @swagger
+ * /api/v1/content_system/get/{id}:
+ *   get:
+ *     tags: [ContentSystem]
+ *     summary: Get content by ID
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -86,24 +60,16 @@ router.post("/", authenticateToken, contentSystemController.create);
  *           type: string
  *     responses:
  *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *         description: Content details
  */
-router.get("/:id", authenticateToken, contentSystemController.getById);
+router.get("/get/:id", authenticateToken, contentController.getContentById);
 
 /**
  * @swagger
- * /api/v1/content-system/{id}:
+ * /api/v1/content_system/update/{id}:
  *   put:
  *     tags: [ContentSystem]
- *     summary: Update content system
+ *     summary: Update content
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -120,24 +86,16 @@ router.get("/:id", authenticateToken, contentSystemController.getById);
  *             type: object
  *     responses:
  *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *         description: Content updated
  */
-router.put("/:id", authenticateToken, contentSystemController.update);
+router.put("/update/:id", authenticateToken, contentController.updateContent);
 
 /**
  * @swagger
- * /api/v1/content-system/{id}:
+ * /api/v1/content_system/delete/{id}:
  *   delete:
  *     tags: [ContentSystem]
- *     summary: Delete content system
+ *     summary: Delete content
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -148,16 +106,8 @@ router.put("/:id", authenticateToken, contentSystemController.update);
  *           type: string
  *     responses:
  *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *         description: Content deleted
  */
-router.delete("/:id", authenticateToken, contentSystemController.delete);
+router.delete("/delete/:id", authenticateToken, contentController.deleteContent);
 
 module.exports = router;

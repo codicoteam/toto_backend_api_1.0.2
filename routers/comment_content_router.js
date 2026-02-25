@@ -1,87 +1,55 @@
 const express = require("express");
 const router = express.Router();
-const commentContentController = require("../controllers/comment_content_controller");
+const comment_contentController = require("../controllers/comment_content_controller");
+const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
  * tags:
- *   name: Comment
- *   description: Comment management endpoints
+ *   name: Comment_content
+ *   description: Comment_content management
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-const { authenticateToken } = require("../middlewares/auth");
-
-// Basic CRUD routes
-
-/**
- * @swagger
- * /api/v1/comment:
+ * /api/v1/comment_content:
  *   get:
- *     tags:
- *       - Comment
- *     summary: Get all Comment records
+ *     tags: [Comment_content]
+ *     summary: Get all comment_content records
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Success
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
  */
-router.get("/", authenticateToken, commentContentController.getAll);
+router.get("/", authenticateToken, comment_contentController.getAll);
 
 /**
  * @swagger
- * /api/v1/comment/{id}:
+ * /api/v1/comment_content/{id}:
  *   get:
- *     tags:
- *       - Comment
- *     summary: Get Comment by ID
+ *     tags: [Comment_content]
+ *     summary: Get comment_content by ID
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Success
- *       404:
- *         description: Not found
  */
-router.get("/:id", authenticateToken, commentContentController.getById);
+router.get("/:id", authenticateToken, comment_contentController.getById);
 
 /**
  * @swagger
- * /api/v1/comment:
+ * /api/v1/comment_content:
  *   post:
- *     tags:
- *       - Comment
- *     summary: Create new Comment
+ *     tags: [Comment_content]
+ *     summary: Create new comment_content
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -92,27 +60,24 @@ router.get("/:id", authenticateToken, commentContentController.getById);
  *             type: object
  *     responses:
  *       201:
- *         description: Created
- *       400:
- *         description: Bad request
+ *         description: Created successfully
  */
-router.post("/", authenticateToken, commentContentController.create);
+router.post("/", authenticateToken, comment_contentController.create);
 
 /**
  * @swagger
- * /api/v1/comment/{id}:
+ * /api/v1/comment_content/{id}:
  *   put:
- *     tags:
- *       - Comment
- *     summary: Update Comment
+ *     tags: [Comment_content]
+ *     summary: Update comment_content
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -121,35 +86,28 @@ router.post("/", authenticateToken, commentContentController.create);
  *             type: object
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Updated successfully
  */
-router.put("/:id", authenticateToken, commentContentController.update);
+router.put("/:id", authenticateToken, comment_contentController.update);
 
 /**
  * @swagger
- * /api/v1/comment/{id}:
+ * /api/v1/comment_content/{id}:
  *   delete:
- *     tags:
- *       - Comment
- *     summary: Delete Comment
+ *     tags: [Comment_content]
+ *     summary: Delete comment_content
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Deleted successfully
  */
-router.delete("/:id", authenticateToken, commentContentController.delete);
+router.delete("/:id", authenticateToken, comment_contentController.delete);
 
-router.get('/', authenticateToken, commentContentController.getAll);
-router.post('/', authenticateToken, commentContentController.create);
 module.exports = router;

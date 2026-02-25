@@ -1,65 +1,57 @@
-// Comment_content Service - Placeholder implementation
-// TODO: Connect to actual database/model
+const Comment_content = require("../models/comment_content_model.js");
 
+// Basic CRUD operations
 exports.getAll = async () => {
-  // Placeholder: Return mock data
-  console.log("Getting all comment_content (placeholder)");
-  return [
-    {
-      id: "1",
-      name: "Sample Comment_content 1",
-      description: "This is a placeholder comment_content",
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "2", 
-      name: "Sample Comment_content 2",
-      description: "Another placeholder comment_content",
-      createdAt: new Date().toISOString()
-    }
-  ];
+  try {
+    const items = await Comment_content.find();
+    return items;
+  } catch (error) {
+    throw new Error("Failed to fetch comment_content: " + error.message);
+  }
 };
 
 exports.getById = async (id) => {
-  // Placeholder: Return mock data
-  console.log("Getting comment_content by ID: " + id + " (placeholder)");
-  return {
-    id: id,
-    name: "Sample Comment_content " + id,
-    description: "This is a placeholder comment_content with ID " + id,
-    details: "More placeholder data for comment_content",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
+  try {
+    const item = await Comment_content.findById(id);
+    if (!item) throw new Error("Comment_content not found");
+    return item;
+  } catch (error) {
+    throw new Error("Failed to fetch comment_content: " + error.message);
+  }
 };
 
 exports.create = async (data) => {
-  // Placeholder: Return mock created data
-  console.log("Creating comment_content (placeholder):", data);
-  return {
-    id: "new-" + Date.now(),
-    ...data,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
+  try {
+    const item = new Comment_content(data);
+    return await item.save();
+  } catch (error) {
+    throw new Error("Failed to create comment_content: " + error.message);
+  }
 };
 
 exports.update = async (id, data) => {
-  // Placeholder: Return mock updated data
-  console.log("Updating comment_content " + id + " (placeholder):", data);
-  return {
-    id: id,
-    ...data,
-    updatedAt: new Date().toISOString()
-  };
+  try {
+    const item = await Comment_content.findByIdAndUpdate(id, data, { new: true });
+    if (!item) throw new Error("Comment_content not found");
+    return item;
+  } catch (error) {
+    throw new Error("Failed to update comment_content: " + error.message);
+  }
 };
 
 exports.delete = async (id) => {
-  // Placeholder: Return success message
-  console.log("Deleting comment_content " + id + " (placeholder)");
-  return { 
-    success: true, 
-    message: "Comment_content " + id + " deleted successfully (placeholder)",
-    deletedId: id 
-  };
+  try {
+    const item = await Comment_content.findByIdAndDelete(id);
+    if (!item) throw new Error("Comment_content not found");
+    return { message: "Comment_content deleted successfully" };
+  } catch (error) {
+    throw new Error("Failed to delete comment_content: " + error.message);
+  }
 };
+
+// Aliases for compatibility
+exports.getAllComment_contents = exports.getAll;
+exports.getComment_contentById = exports.getById;
+exports.createComment_content = exports.create;
+exports.updateComment_content = exports.update;
+exports.deleteComment_content = exports.delete;

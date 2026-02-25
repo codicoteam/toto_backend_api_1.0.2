@@ -1,65 +1,49 @@
-// Content_system Service - Placeholder implementation
-// TODO: Connect to actual database/model
+const ContentSystem = require("../models/content_system.js");
 
+// Basic CRUD operations
 exports.getAll = async () => {
-  // Placeholder: Return mock data
-  console.log("Getting all content_system (placeholder)");
-  return [
-    {
-      id: "1",
-      name: "Sample Content_system 1",
-      description: "This is a placeholder content_system",
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "2", 
-      name: "Sample Content_system 2",
-      description: "Another placeholder content_system",
-      createdAt: new Date().toISOString()
-    }
-  ];
+  try {
+    return await ContentSystem.find();
+  } catch (error) {
+    throw new Error("Failed to fetch content: " + error.message);
+  }
 };
 
 exports.getById = async (id) => {
-  // Placeholder: Return mock data
-  console.log("Getting content_system by ID: " + id + " (placeholder)");
-  return {
-    id: id,
-    name: "Sample Content_system " + id,
-    description: "This is a placeholder content_system with ID " + id,
-    details: "More placeholder data for content_system",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
+  try {
+    const item = await ContentSystem.findById(id);
+    if (!item) throw new Error("Content not found");
+    return item;
+  } catch (error) {
+    throw new Error("Failed to fetch content: " + error.message);
+  }
 };
 
 exports.create = async (data) => {
-  // Placeholder: Return mock created data
-  console.log("Creating content_system (placeholder):", data);
-  return {
-    id: "new-" + Date.now(),
-    ...data,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
+  try {
+    const item = new ContentSystem(data);
+    return await item.save();
+  } catch (error) {
+    throw new Error("Failed to create content: " + error.message);
+  }
 };
 
 exports.update = async (id, data) => {
-  // Placeholder: Return mock updated data
-  console.log("Updating content_system " + id + " (placeholder):", data);
-  return {
-    id: id,
-    ...data,
-    updatedAt: new Date().toISOString()
-  };
+  try {
+    const item = await ContentSystem.findByIdAndUpdate(id, data, { new: true });
+    if (!item) throw new Error("Content not found");
+    return item;
+  } catch (error) {
+    throw new Error("Failed to update content: " + error.message);
+  }
 };
 
 exports.delete = async (id) => {
-  // Placeholder: Return success message
-  console.log("Deleting content_system " + id + " (placeholder)");
-  return { 
-    success: true, 
-    message: "Content_system " + id + " deleted successfully (placeholder)",
-    deletedId: id 
-  };
+  try {
+    const item = await ContentSystem.findByIdAndDelete(id);
+    if (!item) throw new Error("Content not found");
+    return { message: "Content deleted successfully" };
+  } catch (error) {
+    throw new Error("Failed to delete content: " + error.message);
+  }
 };

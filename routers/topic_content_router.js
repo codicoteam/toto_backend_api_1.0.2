@@ -1,89 +1,149 @@
 const express = require("express");
 const router = express.Router();
-const topic_contentController = require("../controllers/topic_content_controller");
+const topicContentController = require("../controllers/topic_content_controller");
+const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
  * tags:
  *   name: TopicContent
- *   description: TopicContent management endpoints
+ *   description: Topic content management
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
+ * /api/v1/topic_content/create:
+ *   post:
+ *     tags: [TopicContent]
+ *     summary: Create topic content
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - Topic
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               lesson:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *               file_path:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               file_type:
+ *                 type: string
+ *               Topic:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Content created
  */
-
-const { authenticateToken } = require("../middlewares/auth");
-
-// Basic routes (customize based on actual controller functions)
+router.post("/create", authenticateToken, topicContentController.createContent);
 
 /**
  * @swagger
- * /api/v1/topiccontent:
+ * /api/v1/topic_content/getall:
  *   get:
- *     tags:
- *       - TopicContent
- *     summary: Get all TopicContent records
+ *     tags: [TopicContent]
+ *     summary: Get all topic contents
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
+ *         description: List of contents
  */
-router.get("/", authenticateToken, topic_contentController.getAll || topic_contentController.getAllTopic_contents);
+router.get("/getall", authenticateToken, topicContentController.getAllContents);
 
 /**
  * @swagger
- * /api/v1/topiccontent/{id}:
+ * /api/v1/topic_content/{id}:
  *   get:
- *     tags:
- *       - TopicContent
- *     summary: Get TopicContent by ID
+ *     tags: [TopicContent]
+ *     summary: Get content by ID
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Content details
  */
-router.get("/:id", authenticateToken, topic_contentController.getById || topic_contentController.getTopic_contentById);
+router.get("/:id", authenticateToken, topicContentController.getContentById);
 
 /**
  * @swagger
- * /api/v1/topiccontent:
- *   post:
- *     tags:
- *       - TopicContent
- *     summary: Create new TopicContent
+ * /api/v1/topic_content/update/{id}:
+ *   put:
+ *     tags: [TopicContent]
+ *     summary: Update content
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Content updated
+ */
+router.put("/update/:id", authenticateToken, topicContentController.updateContent);
+
+/**
+ * @swagger
+ * /api/v1/topic_content/delete/{id}:
+ *   delete:
+ *     tags: [TopicContent]
+ *     summary: Delete content
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Content deleted
+ */
+router.delete("/delete/:id", authenticateToken, topicContentController.deleteContent);
+
+/**
+ * @swagger
+ * /api/v1/topic_content/topic-contents/{contentId}/lessons:
+ *   post:
+ *     tags: [TopicContent]
+ *     summary: Add lesson to content
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: contentId
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -92,27 +152,60 @@ router.get("/:id", authenticateToken, topic_contentController.getById || topic_c
  *             type: object
  *     responses:
  *       201:
- *         description: Created
- *       400:
- *         description: Bad request
+ *         description: Lesson added
  */
-router.post("/", authenticateToken, topic_contentController.create || topic_contentController.createTopic_content);
+router.post("/topic-contents/:contentId/lessons", authenticateToken, topicContentController.addLesson);
 
 /**
  * @swagger
- * /api/v1/topiccontent/{id}:
+ * /api/v1/topic_content/topic-contents/{contentId}/lessons/reorder:
  *   put:
- *     tags:
- *       - TopicContent
- *     summary: Update TopicContent
+ *     tags: [TopicContent]
+ *     summary: Reorder lessons
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: contentId
  *         required: true
  *         schema:
  *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               order:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Lessons reordered
+ */
+router.put("/topic-contents/:contentId/lessons/reorder", authenticateToken, topicContentController.reorderLessons);
+
+/**
+ * @swagger
+ * /api/v1/topic_content/topic-contents/{contentId}/lessons/{lessonId}:
+ *   patch:
+ *     tags: [TopicContent]
+ *     summary: Update lesson
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: contentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: lessonId
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -121,35 +214,78 @@ router.post("/", authenticateToken, topic_contentController.create || topic_cont
  *             type: object
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Lesson updated
  */
-router.put("/:id", authenticateToken, topic_contentController.update || topic_contentController.updateTopic_content);
+router.patch("/topic-contents/:contentId/lessons/:lessonId", authenticateToken, topicContentController.updateLesson);
 
 /**
  * @swagger
- * /api/v1/topiccontent/{id}:
+ * /api/v1/topic_content/topic-contents/{contentId}/lessons/{lessonId}:
  *   delete:
- *     tags:
- *       - TopicContent
- *     summary: Delete TopicContent
+ *     tags: [TopicContent]
+ *     summary: Delete lesson
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: contentId
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
+ *       - in: path
+ *         name: lessonId
+ *         required: true
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Lesson deleted
  */
-router.delete("/:id", authenticateToken, topic_contentController.delete || topic_contentController.deleteTopic_content);
+router.delete("/topic-contents/:contentId/lessons/:lessonId", authenticateToken, topicContentController.deleteLesson);
 
-router.get('/', authenticateToken, topic_contentController.getAll);
-router.post('/', authenticateToken, topic_contentController.create);
+/**
+ * @swagger
+ * /api/v1/topic_content/topic-contents/topic/{topicId}/lean:
+ *   get:
+ *     tags: [TopicContent]
+ *     summary: Get lean content by topic ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: topicId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Content details
+ */
+router.get("/topic-contents/topic/:topicId/lean", authenticateToken, topicContentController.getLeanContentByTopicId);
+
+/**
+ * @swagger
+ * /api/v1/topic_content/lessonInfo/{contentId}/{lessonId}:
+ *   get:
+ *     tags: [TopicContent]
+ *     summary: Get lesson info
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: contentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: lessonId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lesson info
+ */
+router.get("/lessonInfo/:contentId/:lessonId", authenticateToken, topicContentController.getLessonInfo);
+
 module.exports = router;

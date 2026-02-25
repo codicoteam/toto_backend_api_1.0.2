@@ -1,65 +1,57 @@
-const CommentTopicContent = require('../models/comment_topic_content_model');
+const Comment_topic_content = require("../models/comment_topic_content_model.js");
 
-// Get all comment topic content records
-exports.getAll = async (filters = {}) => {
-    try {
-        const data = await CommentTopicContent.find(filters);
-        return data;
-    } catch (error) {
-        throw new Error(`Failed to retrieve comment topic content records: ${error.message}`);
-    }
+// Basic CRUD operations
+exports.getAll = async () => {
+  try {
+    const items = await Comment_topic_content.find();
+    return items;
+  } catch (error) {
+    throw new Error("Failed to fetch comment_topic_content: " + error.message);
+  }
 };
 
-// Get comment topic content by ID
 exports.getById = async (id) => {
-    try {
-        const data = await CommentTopicContent.findById(id);
-        if (!data) {
-            throw new Error('Comment topic content not found');
-        }
-        return data;
-    } catch (error) {
-        throw new Error(`Failed to retrieve comment topic content: ${error.message}`);
-    }
+  try {
+    const item = await Comment_topic_content.findById(id);
+    if (!item) throw new Error("Comment_topic_content not found");
+    return item;
+  } catch (error) {
+    throw new Error("Failed to fetch comment_topic_content: " + error.message);
+  }
 };
 
-// Create new comment topic content
 exports.create = async (data) => {
-    try {
-        const newCommentTopicContent = new CommentTopicContent(data);
-        const savedData = await newCommentTopicContent.save();
-        return savedData;
-    } catch (error) {
-        throw new Error(`Failed to create comment topic content: ${error.message}`);
-    }
+  try {
+    const item = new Comment_topic_content(data);
+    return await item.save();
+  } catch (error) {
+    throw new Error("Failed to create comment_topic_content: " + error.message);
+  }
 };
 
-// Update comment topic content
-exports.update = async (id, updateData) => {
-    try {
-        const updatedData = await CommentTopicContent.findByIdAndUpdate(
-            id,
-            updateData,
-            { new: true, runValidators: true }
-        );
-        if (!updatedData) {
-            throw new Error('Comment topic content not found');
-        }
-        return updatedData;
-    } catch (error) {
-        throw new Error(`Failed to update comment topic content: ${error.message}`);
-    }
+exports.update = async (id, data) => {
+  try {
+    const item = await Comment_topic_content.findByIdAndUpdate(id, data, { new: true });
+    if (!item) throw new Error("Comment_topic_content not found");
+    return item;
+  } catch (error) {
+    throw new Error("Failed to update comment_topic_content: " + error.message);
+  }
 };
 
-// Delete comment topic content
 exports.delete = async (id) => {
-    try {
-        const deletedData = await CommentTopicContent.findByIdAndDelete(id);
-        if (!deletedData) {
-            throw new Error('Comment topic content not found');
-        }
-        return deletedData;
-    } catch (error) {
-        throw new Error(`Failed to delete comment topic content: ${error.message}`);
-    }
+  try {
+    const item = await Comment_topic_content.findByIdAndDelete(id);
+    if (!item) throw new Error("Comment_topic_content not found");
+    return { message: "Comment_topic_content deleted successfully" };
+  } catch (error) {
+    throw new Error("Failed to delete comment_topic_content: " + error.message);
+  }
 };
+
+// Aliases for compatibility
+exports.getAllComment_topic_contents = exports.getAll;
+exports.getComment_topic_contentById = exports.getById;
+exports.createComment_topic_content = exports.create;
+exports.updateComment_topic_content = exports.update;
+exports.deleteComment_topic_content = exports.delete;

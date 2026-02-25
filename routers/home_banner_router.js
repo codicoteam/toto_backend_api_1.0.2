@@ -6,50 +6,30 @@ const { authenticateToken } = require("../middlewares/auth");
 /**
  * @swagger
  * tags:
- *   name: Banner
- *   description: Banner management endpoints
+ *   name: Home_banner
+ *   description: Home_banner management
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-
-/**
- * @swagger
- * /api/v1/home-banner/:
+ * /api/v1/home_banner:
  *   get:
- *     tags: [Banner]
- *     summary: Get all Banner records
+ *     tags: [Home_banner]
+ *     summary: Get all home_banner records
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
  */
-
 router.get("/", authenticateToken, home_bannerController.getAll);
 
 /**
  * @swagger
- * /api/v1/home-banner/{id}:
+ * /api/v1/home_banner/{id}:
  *   get:
- *     tags: [Banner]
- *     summary: Get Banner by ID
+ *     tags: [Home_banner]
+ *     summary: Get home_banner by ID
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -61,24 +41,15 @@ router.get("/", authenticateToken, home_bannerController.getAll);
  *     responses:
  *       200:
  *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
  */
-
 router.get("/:id", authenticateToken, home_bannerController.getById);
 
 /**
  * @swagger
- * /api/v1/home-banner/:
+ * /api/v1/home_banner:
  *   post:
- *     tags: [Banner]
- *     summary: Create new Banner
+ *     tags: [Home_banner]
+ *     summary: Create new home_banner
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -88,26 +59,17 @@ router.get("/:id", authenticateToken, home_bannerController.getById);
  *           schema:
  *             type: object
  *     responses:
- *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *       201:
+ *         description: Created successfully
  */
-
 router.post("/", authenticateToken, home_bannerController.create);
 
 /**
  * @swagger
- * /api/v1/home-banner/{id}:
+ * /api/v1/home_banner/{id}:
  *   put:
- *     tags: [Banner]
- *     summary: Update Banner
+ *     tags: [Home_banner]
+ *     summary: Update home_banner
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -124,25 +86,16 @@ router.post("/", authenticateToken, home_bannerController.create);
  *             type: object
  *     responses:
  *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *         description: Updated successfully
  */
-
 router.put("/:id", authenticateToken, home_bannerController.update);
 
 /**
  * @swagger
- * /api/v1/home-banner/{id}:
+ * /api/v1/home_banner/{id}:
  *   delete:
- *     tags: [Banner]
- *     summary: Delete Banner
+ *     tags: [Home_banner]
+ *     summary: Delete home_banner
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -153,19 +106,8 @@ router.put("/:id", authenticateToken, home_bannerController.update);
  *           type: string
  *     responses:
  *       200:
- *         description: Success
- *       400:
- *         description: Bad request
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Not found
- *       500:
- *         description: Server error
+ *         description: Deleted successfully
  */
-
 router.delete("/:id", authenticateToken, home_bannerController.delete);
 
-router.get('/', authenticateToken, home_bannerController.getAll);
-router.post('/', authenticateToken, home_bannerController.create);
 module.exports = router;

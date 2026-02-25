@@ -1,87 +1,21 @@
 const express = require("express");
 const router = express.Router();
 const walletController = require("../controllers/wallet_controller");
+const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
  * tags:
  *   name: Wallet
- *   description: Wallet management endpoints
+ *   description: Student wallet management
  */
 
 /**
  * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- */
-
-const { authenticateToken } = require("../middlewares/auth");
-
-// Basic routes (customize based on actual controller functions)
-
-/**
- * @swagger
- * /api/v1/wallet:
- *   get:
- *     tags:
- *       - Wallet
- *     summary: Get all Wallet records
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- */
-router.get("/", authenticateToken, walletController.getAll || walletController.getAllWallets);
-
-/**
- * @swagger
- * /api/v1/wallet/{id}:
- *   get:
- *     tags:
- *       - Wallet
- *     summary: Get Wallet by ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Success
- *       404:
- *         description: Not found
- */
-router.get("/:id", authenticateToken, walletController.getById || walletController.getWalletById);
-
-/**
- * @swagger
- * /api/v1/wallet:
+ * /api/wallet/create:
  *   post:
- *     tags:
- *       - Wallet
- *     summary: Create new Wallet
+ *     tags: [Wallet]
+ *     summary: Create wallet
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -90,29 +24,68 @@ router.get("/:id", authenticateToken, walletController.getById || walletControll
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - student
+ *               - currency
+ *             properties:
+ *               student:
+ *                 type: string
+ *                 example: "691884c9aa794e741c924e74"
+ *               currency:
+ *                 type: string
+ *                 example: "USD"
  *     responses:
  *       201:
- *         description: Created
- *       400:
- *         description: Bad request
+ *         description: Wallet created
  */
-router.post("/", authenticateToken, walletController.create || walletController.createWallet);
+router.post("/create", authenticateToken, walletController.createWallet);
 
 /**
  * @swagger
- * /api/v1/wallet/{id}:
+ * /api/wallet/all:
+ *   get:
+ *     tags: [Wallet]
+ *     summary: Get all wallets
+ *     responses:
+ *       200:
+ *         description: List of wallets
+ */
+router.get("/all", walletController.getAllWallets);
+
+/**
+ * @swagger
+ * /api/wallet/student/{studentId}:
+ *   get:
+ *     tags: [Wallet]
+ *     summary: Get wallet by student ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Wallet details
+ */
+router.get("/student/:studentId", authenticateToken, walletController.getWalletByStudentId);
+
+/**
+ * @swagger
+ * /api/wallet/update/{id}:
  *   put:
- *     tags:
- *       - Wallet
- *     summary: Update Wallet
+ *     tags: [Wallet]
+ *     summary: Update wallet
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *     security:
- *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -121,35 +94,123 @@ router.post("/", authenticateToken, walletController.create || walletController.
  *             type: object
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Wallet updated
  */
-router.put("/:id", authenticateToken, walletController.update || walletController.updateWallet);
+router.put("/update/:id", authenticateToken, walletController.updateWallet);
 
 /**
  * @swagger
- * /api/v1/wallet/{id}:
+ * /api/wallet/delete/{id}:
  *   delete:
- *     tags:
- *       - Wallet
- *     summary: Delete Wallet
+ *     tags: [Wallet]
+ *     summary: Delete wallet
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
+ *     responses:
+ *       200:
+ *         description: Wallet deleted
+ */
+router.delete("/delete/:id", authenticateToken, walletController.deleteWallet);
+
+/**
+ * @swagger
+ * /api/wallet/withdraw/{studentId}:
+ *   post:
+ *     tags: [Wallet]
+ *     summary: Withdraw from wallet
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - amount
+ *               - method
+ *             properties:
+ *               amount:
+ *                 type: number
+ *                 example: 3
+ *               method:
+ *                 type: string
+ *                 example: "ecocash"
+ *               reference:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Withdrawal successful
+ */
+router.post("/withdraw/:studentId", authenticateToken, walletController.withdraw);
+
+/**
+ * @swagger
+ * /api/wallet/deposit/{studentId}:
+ *   post:
+ *     tags: [Wallet]
+ *     summary: Deposit to wallet
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - amount
+ *               - method
+ *             properties:
+ *               amount:
+ *                 type: number
+ *                 example: 100
+ *               method:
+ *                 type: string
+ *                 example: "bank_transfer"
+ *               reference:
+ *                 type: string
+ *                 example: "REF123456"
+ *               description:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Deposit successful
+ */
+router.post("/deposit/:studentId", authenticateToken, walletController.deposit);
+
+/**
+ * @swagger
+ * /api/wallet/dashboard:
+ *   get:
+ *     tags: [Wallet]
+ *     summary: Get wallet dashboard data
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Success
- *       404:
- *         description: Not found
+ *         description: Dashboard data
  */
-router.delete("/:id", authenticateToken, walletController.delete || walletController.deleteWallet);
+router.get("/dashboard", authenticateToken, walletController.getDashboardData);
 
-router.get('/', authenticateToken, walletController.getAll);
-router.post('/', authenticateToken, walletController.create);
 module.exports = router;
