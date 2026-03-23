@@ -12,7 +12,7 @@ const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
- * /api/v1/comment_topic_content/create:
+ * /api/v1/comment-topic-content/create:
  *   post:
  *     tags: [CommentTopicContent]
  *     summary: Create comment
@@ -25,19 +25,32 @@ const { authenticateToken } = require("../middlewares/auth");
  *           schema:
  *             type: object
  *             required:
- *               - student_id
- *               - topic_content_id
- *               - comment_on_content
+ *               - userId
+ *               - userType
+ *               - topicId
+ *               - content
  *             properties:
- *               student_id:
+ *               userId:
  *                 type: string
- *               topic_content_id:
+ *                 example: "60d21b4667d0d8992e610c85"
+ *                 description: ID of the user creating the comment
+ *               userType:
  *                 type: string
- *               comment_on_content:
+ *                 enum: [student, teacher, admin]
+ *                 example: "student"
+ *                 description: Type of user
+ *               topicId:
  *                 type: string
- *               showComment:
- *                 type: boolean
- *                 default: true
+ *                 example: "60d21b4667d0d8992e610c86"
+ *                 description: ID of the topic content being commented on
+ *               content:
+ *                 type: string
+ *                 example: "This is a great explanation!"
+ *                 description: Comment text
+ *               parentCommentId:
+ *                 type: string
+ *                 example: "60d21b4667d0d8992e610c87"
+ *                 description: ID of parent comment (for replies, optional)
  *     responses:
  *       201:
  *         description: Comment created
@@ -46,7 +59,7 @@ router.post("/create", authenticateToken, commentController.createComment);
 
 /**
  * @swagger
- * /api/v1/comment_topic_content/getall:
+ * /api/v1/comment-topic-content/getall:
  *   get:
  *     tags: [CommentTopicContent]
  *     summary: Get all comments
@@ -60,7 +73,7 @@ router.get("/getall", authenticateToken, commentController.getAllComments);
 
 /**
  * @swagger
- * /api/v1/comment_topic_content/bytopic/{topicContentId}:
+ * /api/v1/comment-topic-content/bytopic/{topicContentId}:
  *   get:
  *     tags: [CommentTopicContent]
  *     summary: Get comments by topic content ID
@@ -72,6 +85,7 @@ router.get("/getall", authenticateToken, commentController.getAllComments);
  *         required: true
  *         schema:
  *           type: string
+ *         description: Topic content ID
  *     responses:
  *       200:
  *         description: Comments for topic
@@ -80,7 +94,7 @@ router.get("/bytopic/:topicContentId", authenticateToken, commentController.getC
 
 /**
  * @swagger
- * /api/v1/comment_topic_content/update/{id}:
+ * /api/v1/comment-topic-content/update/{id}:
  *   put:
  *     tags: [CommentTopicContent]
  *     summary: Update comment
@@ -92,12 +106,17 @@ router.get("/bytopic/:topicContentId", authenticateToken, commentController.getC
  *         required: true
  *         schema:
  *           type: string
+ *         description: Comment ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 example: "Updated comment text"
  *     responses:
  *       200:
  *         description: Comment updated
@@ -106,7 +125,7 @@ router.put("/update/:id", authenticateToken, commentController.updateComment);
 
 /**
  * @swagger
- * /api/v1/comment_topic_content/delete/{id}:
+ * /api/v1/comment-topic-content/delete/{id}:
  *   delete:
  *     tags: [CommentTopicContent]
  *     summary: Delete comment
@@ -118,6 +137,7 @@ router.put("/update/:id", authenticateToken, commentController.updateComment);
  *         required: true
  *         schema:
  *           type: string
+ *         description: Comment ID
  *     responses:
  *       200:
  *         description: Comment deleted
@@ -126,7 +146,7 @@ router.delete("/delete/:id", authenticateToken, commentController.deleteComment)
 
 /**
  * @swagger
- * /api/v1/comment_topic_content/delete/bytopic/{topicContentId}:
+ * /api/v1/comment-topic-content/delete/bytopic/{topicContentId}:
  *   delete:
  *     tags: [CommentTopicContent]
  *     summary: Delete all comments by topic content ID
@@ -138,6 +158,7 @@ router.delete("/delete/:id", authenticateToken, commentController.deleteComment)
  *         required: true
  *         schema:
  *           type: string
+ *         description: Topic content ID
  *     responses:
  *       200:
  *         description: Comments deleted

@@ -12,49 +12,49 @@ const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
- * /api/wallet/create:
- *   post:
- *     tags: [Wallet]
- *     summary: Create wallet
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - student
- *               - currency
- *             properties:
- *               student:
- *                 type: string
- *                 example: "691884c9aa794e741c924e74"
- *               currency:
- *                 type: string
- *                 example: "USD"
- *     responses:
- *       201:
- *         description: Wallet created
- */
-router.post("/create", authenticateToken, walletController.createWallet);
-
-/**
- * @swagger
- * /api/wallet/all:
+ * /api/v1/wallet:
  *   get:
  *     tags: [Wallet]
  *     summary: Get all wallets
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of wallets
  */
-router.get("/all", walletController.getAllWallets);
+router.get("/", authenticateToken, walletController.getAllWallets);
 
 /**
  * @swagger
- * /api/wallet/student/{studentId}:
+ * /api/v1/wallet/dashboard:
+ *   get:
+ *     tags: [Wallet]
+ *     summary: Get wallet dashboard data
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dashboard data
+ */
+router.get("/dashboard", authenticateToken, walletController.getDashboardData);
+
+/**
+ * @swagger
+ * /api/v1/wallet/summary:
+ *   get:
+ *     tags: [Wallet]
+ *     summary: Get wallet summary (admin)
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Wallet summary
+ */
+router.get("/summary", authenticateToken, walletController.getSummary);
+
+/**
+ * @swagger
+ * /api/v1/wallet/student/{studentId}:
  *   get:
  *     tags: [Wallet]
  *     summary: Get wallet by student ID
@@ -74,56 +74,10 @@ router.get("/student/:studentId", authenticateToken, walletController.getWalletB
 
 /**
  * @swagger
- * /api/wallet/update/{id}:
- *   put:
+ * /api/v1/wallet/student/{studentId}/transactions:
+ *   get:
  *     tags: [Wallet]
- *     summary: Update wallet
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *     responses:
- *       200:
- *         description: Wallet updated
- */
-router.put("/update/:id", authenticateToken, walletController.updateWallet);
-
-/**
- * @swagger
- * /api/wallet/delete/{id}:
- *   delete:
- *     tags: [Wallet]
- *     summary: Delete wallet
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Wallet deleted
- */
-router.delete("/delete/:id", authenticateToken, walletController.deleteWallet);
-
-/**
- * @swagger
- * /api/wallet/withdraw/{studentId}:
- *   post:
- *     tags: [Wallet]
- *     summary: Withdraw from wallet
+ *     summary: Get transaction history
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -132,6 +86,25 @@ router.delete("/delete/:id", authenticateToken, walletController.deleteWallet);
  *         required: true
  *         schema:
  *           type: string
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 50
+ *     responses:
+ *       200:
+ *         description: Transaction history
+ */
+router.get("/student/:studentId/transactions", authenticateToken, walletController.getTransactions);
+
+/**
+ * @swagger
+ * /api/v1/wallet:
+ *   post:
+ *     tags: [Wallet]
+ *     summary: Create wallet
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -139,28 +112,25 @@ router.delete("/delete/:id", authenticateToken, walletController.deleteWallet);
  *           schema:
  *             type: object
  *             required:
- *               - amount
- *               - method
+ *               - student
+ *               - currency
  *             properties:
- *               amount:
- *                 type: number
- *                 example: 3
- *               method:
+ *               student:
  *                 type: string
- *                 example: "ecocash"
- *               reference:
+ *                 example: "60d21b4667d0d8992e610c85"
+ *               currency:
  *                 type: string
- *               description:
- *                 type: string
+ *                 enum: [USD, ZWL, EUR, GBP]
+ *                 example: "USD"
  *     responses:
- *       200:
- *         description: Withdrawal successful
+ *       201:
+ *         description: Wallet created
  */
-router.post("/withdraw/:studentId", authenticateToken, walletController.withdraw);
+router.post("/", authenticateToken, walletController.createWallet);
 
 /**
  * @swagger
- * /api/wallet/deposit/{studentId}:
+ * /api/v1/wallet/student/{studentId}/deposit:
  *   post:
  *     tags: [Wallet]
  *     summary: Deposit to wallet
@@ -187,30 +157,107 @@ router.post("/withdraw/:studentId", authenticateToken, walletController.withdraw
  *                 example: 100
  *               method:
  *                 type: string
- *                 example: "bank_transfer"
+ *                 enum: [ecocash, bank_transfer, credit_card, paypal, cash]
+ *                 example: "ecocash"
  *               reference:
  *                 type: string
  *                 example: "REF123456"
  *               description:
  *                 type: string
+ *                 example: "Deposit from Ecocash"
  *     responses:
  *       200:
  *         description: Deposit successful
  */
-router.post("/deposit/:studentId", authenticateToken, walletController.deposit);
+router.post("/student/:studentId/deposit", authenticateToken, walletController.deposit);
 
 /**
  * @swagger
- * /api/wallet/dashboard:
- *   get:
+ * /api/v1/wallet/student/{studentId}/withdraw:
+ *   post:
  *     tags: [Wallet]
- *     summary: Get wallet dashboard data
+ *     summary: Withdraw from wallet
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: studentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - amount
+ *               - method
+ *             properties:
+ *               amount:
+ *                 type: number
+ *                 example: 50
+ *               method:
+ *                 type: string
+ *                 enum: [ecocash, bank_transfer, cash]
+ *                 example: "ecocash"
+ *               reference:
+ *                 type: string
+ *                 example: "WITHDRAW123"
+ *               description:
+ *                 type: string
+ *                 example: "Withdrawal to Ecocash"
  *     responses:
  *       200:
- *         description: Dashboard data
+ *         description: Withdrawal successful
  */
-router.get("/dashboard", authenticateToken, walletController.getDashboardData);
+router.post("/student/:studentId/withdraw", authenticateToken, walletController.withdraw);
+
+/**
+ * @swagger
+ * /api/v1/wallet/{id}:
+ *   put:
+ *     tags: [Wallet]
+ *     summary: Update wallet
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Wallet updated
+ */
+router.put("/:id", authenticateToken, walletController.updateWallet);
+
+/**
+ * @swagger
+ * /api/v1/wallet/{id}:
+ *   delete:
+ *     tags: [Wallet]
+ *     summary: Delete wallet
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Wallet deleted
+ */
+router.delete("/:id", authenticateToken, walletController.deleteWallet);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const Subject = require("../models/subject.js");
+const Subject = require("../models/subjects_model.js");
 
 // Basic CRUD operations with placeholders
 exports.getAll = async () => {

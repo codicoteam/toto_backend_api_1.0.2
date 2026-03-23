@@ -1,13 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const mongoose = require("mongoose");
 
 // Load env
 dotenv.config();
 
 // Database connection
 const connectDB = require("./configs/db_config");
-connectDB();
 
 // Swagger setup
 const setupSwagger = require("./configs/swagger_config");
@@ -36,6 +36,7 @@ const topic_contentRouter = require('./routers/topic_content_router');
 const topic_in_subjectRouter = require('./routers/topic_in_subject_router');
 const topicRouter = require('./routers/topic_router');
 const walletRouter = require('./routers/wallet_router');
+const projectRouter = require('./routers/project_router');
 
 const app = express();
 
@@ -48,7 +49,7 @@ app.use(express.urlencoded({ extended: true }));
 setupSwagger(app);
 
 // API Routes
-app.use('/api/v1/admin', adminRouter);
+app.use('/api/v1/admin', adminRouter); 
 app.use('/api/v1/chat', chatRouter);
 app.use('/api/v1/comment-content', comment_contentRouter);
 app.use('/api/v1/comment-topic-content', comment_topic_contentRouter);
@@ -71,6 +72,7 @@ app.use('/api/v1/topic-content', topic_contentRouter);
 app.use('/api/v1/topic-in-subject', topic_in_subjectRouter);
 app.use('/api/v1/topic', topicRouter);
 app.use('/api/v1/wallet', walletRouter);
+app.use('/api/v1/project', projectRouter);
 
 // Health check route
 app.get('/', (req, res) => {
@@ -79,6 +81,24 @@ app.get('/', (req, res) => {
     message: 'Toto Academy API is running',
     environment: process.env.NODE_ENV || 'development',
     timestamp: new Date().toISOString()
+  });
+});
+
+// Database status endpoint
+app.get('/api/health', (req, res) => {
+  const dbState = mongoose.connection.readyState;
+  const states = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting'
+  };
+  
+  res.json({
+    status: 'OK',
+    database: states[dbState] || 'unknown',
+    databaseName: mongoose.connection.name || 'none',
+    time: new Date().toISOString()
   });
 });
 
@@ -101,20 +121,18 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 4071;
+const server = app.listen(PORT, async () => {
   console.log(`âœ… Server running on port ${PORT}`);
-  console.log(`í³˜ API Documentation: http://localhost:${PORT}/api-docs`);
+  console.log(`í³š API Documentation: http://localhost:${PORT}/api-docs`);
   console.log(`í¼ Environment: ${process.env.NODE_ENV || 'development'}`);
+  
+  // Connect to database
+  try {
+    await connectDB();
+  } catch (error) {
+    console.log('âš ï¸  Server is running but database connection failed');
+  }
 });
 
 module.exports = app;
-
-// Safety check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'OK',
-    time: new Date().toISOString(),
-    routers: Object.keys(require.cache).filter(x => x.includes('routers')).length
-  });
-});

@@ -12,7 +12,7 @@ const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
- * /api/v1/admin_route/signup:
+ * /api/v1/admin/signup:
  *   post:
  *     tags: [Admin]
  *     summary: Admin signup
@@ -50,7 +50,7 @@ router.post("/signup", adminController.registerAdmin);
 
 /**
  * @swagger
- * /api/v1/admin_route/login:
+ * /api/v1/admin/login:
  *   post:
  *     tags: [Admin]
  *     summary: Admin login
@@ -67,8 +67,11 @@ router.post("/signup", adminController.registerAdmin);
  *               email:
  *                 type: string
  *                 format: email
+ *                 example: admin@example.com
  *               password:
  *                 type: string
+ *                 format: password
+ *                 example: password123
  *     responses:
  *       200:
  *         description: Login successful
@@ -93,7 +96,7 @@ router.post("/login", adminController.loginAdmin);
 
 /**
  * @swagger
- * /api/v1/admin_route/forgot-password:
+ * /api/v1/admin/forgot-password:
  *   post:
  *     tags: [Admin]
  *     summary: Forgot password
@@ -117,7 +120,7 @@ router.post("/forgot-password", adminController.forgotPassword);
 
 /**
  * @swagger
- * /api/v1/admin_route/verify-reset-otp:
+ * /api/v1/admin/verify-reset-otp:
  *   post:
  *     tags: [Admin]
  *     summary: Verify reset OTP
@@ -144,7 +147,7 @@ router.post("/verify-reset-otp", adminController.verifyResetOTP);
 
 /**
  * @swagger
- * /api/v1/admin_route/reset-password:
+ * /api/v1/admin/reset-password:
  *   post:
  *     tags: [Admin]
  *     summary: Reset password
@@ -174,7 +177,7 @@ router.post("/reset-password", adminController.resetPassword);
 
 /**
  * @swagger
- * /api/v1/admin_route/admins:
+ * /api/v1/admin/admins:
  *   get:
  *     tags: [Admin]
  *     summary: Get all admins
@@ -188,7 +191,7 @@ router.get("/admins", authenticateToken, adminController.getAllAdmins);
 
 /**
  * @swagger
- * /api/v1/admin_route/admins/{id}:
+ * /api/v1/admin/admins/{id}:
  *   get:
  *     tags: [Admin]
  *     summary: Get admin by ID

@@ -107,3 +107,86 @@ router.get("/user/:userId", authenticateToken, chatController.getUserChats);
 router.delete("/message/:messageId", authenticateToken, chatController.deleteMessage);
 
 module.exports = router;
+
+/**
+ * @swagger
+ * /api/v1/teacher-student-chat/mark-read:
+ *   post:
+ *     tags: [TeacherStudentChat]
+ *     summary: Mark messages as read
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - otherUserId
+ *             properties:
+ *               userId:
+ *                 type: string
+ *               otherUserId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Messages marked as read
+ */
+router.post("/mark-read", authenticateToken, chatController.markAsRead);
+
+/**
+ * @swagger
+ * /api/v1/teacher-student-chat/unread/{userId}:
+ *   get:
+ *     tags: [TeacherStudentChat]
+ *     summary: Get unread message count for user
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Unread count
+ */
+router.get("/unread/:userId", authenticateToken, chatController.getUnreadCount);
+
+/**
+ * @swagger
+ * /api/v1/teacher-student-chat/message/{messageId}/delete-for-user:
+ *   delete:
+ *     tags: [TeacherStudentChat]
+ *     summary: Delete message for specific user
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: messageId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - userType
+ *             properties:
+ *               userId:
+ *                 type: string
+ *               userType:
+ *                 type: string
+ *                 enum: [Teacher, Student]
+ *     responses:
+ *       200:
+ *         description: Message deleted for user
+ */
+router.delete("/message/:messageId/delete-for-user", authenticateToken, chatController.deleteForUser);

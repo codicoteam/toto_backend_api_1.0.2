@@ -58,6 +58,30 @@ router.get("/:id", authenticateToken, topicController.getTopicById);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - title
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "Introduction to Algebra"
+ *                 description: Topic title (required)
+ *               description:
+ *                 type: string
+ *                 example: "Basic algebra concepts including variables and equations"
+ *                 description: Topic description (optional)
+ *               subjectId:
+ *                 type: string
+ *                 example: "60d21b4667d0d8992e610c85"
+ *                 description: MongoDB ObjectId of the subject (optional)
+ *               order:
+ *                 type: number
+ *                 example: 1
+ *                 description: Display order (optional, defaults to 0)
+ *               status:
+ *                 type: string
+ *                 enum: [active, inactive]
+ *                 example: "active"
+ *                 description: Topic status (optional, defaults to active)
  *     responses:
  *       201:
  *         description: Created successfully

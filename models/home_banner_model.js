@@ -1,12 +1,23 @@
 const mongoose = require('mongoose');
 
-const home_bannerSchema = new mongoose.Schema({
+const homeBannerSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
     },
     description: {
         type: String
+    },
+    imageUrl: {
+        type: String,
+        required: true
+    },
+    linkUrl: {
+        type: String
+    },
+    order: {
+        type: Number,
+        default: 0
     },
     createdBy: {
         userId: mongoose.Schema.Types.ObjectId,
@@ -20,4 +31,4 @@ const home_bannerSchema = new mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('Home_banner', home_bannerSchema);
+module.exports = mongoose.model('HomeBanner', homeBannerSchema);

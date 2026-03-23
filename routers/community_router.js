@@ -12,7 +12,7 @@ const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
- * /api/v1/community_service/create:
+ * /api/v1/community/create:
  *   post:
  *     tags: [Community]
  *     summary: Create community
@@ -26,20 +26,29 @@ const { authenticateToken } = require("../middlewares/auth");
  *             type: object
  *             required:
  *               - name
- *               - subject
  *             properties:
  *               name:
  *                 type: string
- *               profilePicture:
+ *                 example: "Mathematics Study Group"
+ *                 description: Community name (required)
+ *               description:
  *                 type: string
- *               subject:
- *                 type: string
- *               Level:
- *                 type: string
- *               students:
- *                 type: array
- *                 items:
- *                   type: string
+ *                 example: "A group for math enthusiasts"
+ *                 description: Community description
+ *               createdBy:
+ *                 type: object
+ *                 properties:
+ *                   userId:
+ *                     type: string
+ *                     example: "60d21b4667d0d8992e610c85"
+ *                   userType:
+ *                     type: string
+ *                     enum: [student, teacher, admin]
+ *                     example: "teacher"
+ *               isActive:
+ *                 type: boolean
+ *                 example: true
+ *                 default: true
  *     responses:
  *       201:
  *         description: Community created
@@ -48,7 +57,7 @@ router.post("/create", authenticateToken, communityController.createCommunity);
 
 /**
  * @swagger
- * /api/v1/community_service/getall:
+ * /api/v1/community/getall:
  *   get:
  *     tags: [Community]
  *     summary: Get all communities
@@ -62,7 +71,7 @@ router.get("/getall", authenticateToken, communityController.getAllCommunities);
 
 /**
  * @swagger
- * /api/v1/community_service/get/{id}:
+ * /api/v1/community/get/{id}:
  *   get:
  *     tags: [Community]
  *     summary: Get community by ID
@@ -74,6 +83,7 @@ router.get("/getall", authenticateToken, communityController.getAllCommunities);
  *         required: true
  *         schema:
  *           type: string
+ *         description: Community ID
  *     responses:
  *       200:
  *         description: Community details
@@ -82,7 +92,7 @@ router.get("/get/:id", authenticateToken, communityController.getCommunityById);
 
 /**
  * @swagger
- * /api/v1/community_service/update/{id}:
+ * /api/v1/community/update/{id}:
  *   put:
  *     tags: [Community]
  *     summary: Update community
@@ -94,12 +104,22 @@ router.get("/get/:id", authenticateToken, communityController.getCommunityById);
  *         required: true
  *         schema:
  *           type: string
+ *         description: Community ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Updated Community Name"
+ *               description:
+ *                 type: string
+ *                 example: "Updated description"
+ *               isActive:
+ *                 type: boolean
  *     responses:
  *       200:
  *         description: Community updated
@@ -108,7 +128,7 @@ router.put("/update/:id", authenticateToken, communityController.updateCommunity
 
 /**
  * @swagger
- * /api/v1/community_service/delete/{id}:
+ * /api/v1/community/delete/{id}:
  *   delete:
  *     tags: [Community]
  *     summary: Delete community
@@ -120,6 +140,7 @@ router.put("/update/:id", authenticateToken, communityController.updateCommunity
  *         required: true
  *         schema:
  *           type: string
+ *         description: Community ID
  *     responses:
  *       200:
  *         description: Community deleted
@@ -128,7 +149,7 @@ router.delete("/delete/:id", authenticateToken, communityController.deleteCommun
 
 /**
  * @swagger
- * /api/v1/community_service/join/{communityId}:
+ * /api/v1/community/join/{communityId}:
  *   post:
  *     tags: [Community]
  *     summary: Join community
@@ -140,6 +161,7 @@ router.delete("/delete/:id", authenticateToken, communityController.deleteCommun
  *         required: true
  *         schema:
  *           type: string
+ *         description: Community ID
  *     requestBody:
  *       required: true
  *       content:
@@ -147,10 +169,16 @@ router.delete("/delete/:id", authenticateToken, communityController.deleteCommun
  *           schema:
  *             type: object
  *             required:
- *               - studentId
+ *               - userId
+ *               - userType
  *             properties:
- *               studentId:
+ *               userId:
  *                 type: string
+ *                 example: "60d21b4667d0d8992e610c85"
+ *               userType:
+ *                 type: string
+ *                 enum: [student, teacher, admin]
+ *                 example: "student"
  *     responses:
  *       200:
  *         description: Joined community
@@ -159,7 +187,7 @@ router.post("/join/:communityId", authenticateToken, communityController.joinCom
 
 /**
  * @swagger
- * /api/v1/community_service/leave/{communityId}:
+ * /api/v1/community/leave/{communityId}:
  *   post:
  *     tags: [Community]
  *     summary: Leave community
@@ -171,6 +199,7 @@ router.post("/join/:communityId", authenticateToken, communityController.joinCom
  *         required: true
  *         schema:
  *           type: string
+ *         description: Community ID
  *     requestBody:
  *       required: true
  *       content:
@@ -178,10 +207,16 @@ router.post("/join/:communityId", authenticateToken, communityController.joinCom
  *           schema:
  *             type: object
  *             required:
- *               - studentId
+ *               - userId
+ *               - userType
  *             properties:
- *               studentId:
+ *               userId:
  *                 type: string
+ *                 example: "60d21b4667d0d8992e610c85"
+ *               userType:
+ *                 type: string
+ *                 enum: [student, teacher, admin]
+ *                 example: "student"
  *     responses:
  *       200:
  *         description: Left community
@@ -190,7 +225,7 @@ router.post("/leave/:communityId", authenticateToken, communityController.leaveC
 
 /**
  * @swagger
- * /api/v1/community_service/subject/{subjectId}:
+ * /api/v1/community/subject/{subjectId}:
  *   get:
  *     tags: [Community]
  *     summary: Get communities by subject ID
@@ -202,6 +237,7 @@ router.post("/leave/:communityId", authenticateToken, communityController.leaveC
  *         required: true
  *         schema:
  *           type: string
+ *         description: Subject ID
  *     responses:
  *       200:
  *         description: Communities for subject

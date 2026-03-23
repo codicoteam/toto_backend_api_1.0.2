@@ -55,3 +55,27 @@ exports.getComment_topic_contentById = exports.getById;
 exports.createComment_topic_content = exports.create;
 exports.updateComment_topic_content = exports.update;
 exports.deleteComment_topic_content = exports.delete;
+
+// Get comments by topic content ID
+exports.getByTopicContentId = async (topicContentId) => {
+  try {
+    const items = await Comment_topic_content.find({ topicId: topicContentId, isDeleted: false })
+      .sort({ createdAt: -1 });
+    return items;
+  } catch (error) {
+    throw new Error("Failed to fetch comments by topic: " + error.message);
+  }
+};
+
+// Delete comments by topic content ID
+exports.deleteByTopicContentId = async (topicContentId) => {
+  try {
+    await Comment_topic_content.updateMany(
+      { topicId: topicContentId },
+      { isDeleted: true }
+    );
+    return { message: "Comments deleted successfully" };
+  } catch (error) {
+    throw new Error("Failed to delete comments by topic: " + error.message);
+  }
+};

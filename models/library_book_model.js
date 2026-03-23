@@ -1,12 +1,51 @@
 const mongoose = require('mongoose');
 
-const library_bookSchema = new mongoose.Schema({
+const libraryBookSchema = new mongoose.Schema({
     name: {
+        type: String,
+        required: true
+    },
+    author: {
         type: String,
         required: true
     },
     description: {
         type: String
+    },
+    subjectId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Subject',
+        required: true
+    },
+    isbn: {
+        type: String
+    },
+    publisher: {
+        type: String
+    },
+    publishedYear: {
+        type: Number
+    },
+    pages: {
+        type: Number
+    },
+    coverImage: {
+        type: String
+    },
+    fileUrl: {
+        type: String
+    },
+    likes: [{
+        userId: mongoose.Schema.Types.ObjectId,
+        userType: String,
+        likedAt: {
+            type: Date,
+            default: Date.now
+        }
+    }],
+    likeCount: {
+        type: Number,
+        default: 0
     },
     createdBy: {
         userId: mongoose.Schema.Types.ObjectId,
@@ -20,4 +59,8 @@ const library_bookSchema = new mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('Library_book', library_bookSchema);
+// Index for faster queries
+libraryBookSchema.index({ subjectId: 1 });
+libraryBookSchema.index({ name: 'text', author: 'text', description: 'text' });
+
+module.exports = mongoose.model('LibraryBook', libraryBookSchema);

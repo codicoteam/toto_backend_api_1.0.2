@@ -72,3 +72,97 @@ exports.getTeacherById = exports.getById;
 exports.createTeacher = exports.create;
 exports.updateTeacher = exports.update;
 exports.deleteTeacher = exports.delete;
+
+// Password reset methods
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const result = await teacherService.forgotPassword(email);
+    res.status(200).json({
+      success: true,
+      message: "Password reset OTP sent to email",
+      data: result
+    });
+  } catch (error) {
+    res.status(404).json({
+      success: false,
+      message: "Failed to send OTP",
+      error: error.message
+    });
+  }
+};
+
+exports.verifyOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const result = await teacherService.verifyOTP(email, otp);
+    res.status(200).json({
+      success: true,
+      message: "OTP verified successfully",
+      data: result
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "OTP verification failed",
+      error: error.message
+    });
+  }
+};
+
+exports.verifyResetOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const result = await teacherService.verifyOTP(email, otp);
+    res.status(200).json({
+      success: true,
+      message: "OTP verified successfully",
+      data: result
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "OTP verification failed",
+      error: error.message
+    });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    
+    // Use the OTP-verified reset method
+    const result = await teacherService.resetPasswordWithOTP(email, otp, newPassword);
+    
+    res.status(200).json({
+      success: true,
+      message: "Password reset successfully",
+      data: result
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "Failed to reset password",
+      error: error.message
+    });
+  }
+};
+
+exports.resendOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const result = await teacherService.resendOTP(email);
+    res.status(200).json({
+      success: true,
+      message: "OTP resent successfully",
+      data: result
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "Failed to resend OTP",
+      error: error.message
+    });
+  }
+};

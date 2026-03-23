@@ -66,3 +66,28 @@ exports.getTopStudentsByExamId = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+// Additional aliases
+exports.getAllRecords = exports.getAll;
+exports.getRecordById = exports.getById;
+exports.createRecord = exports.create;
+exports.updateRecord = exports.update;
+exports.deleteRecord = exports.delete;
+
+exports.getRecordsByExamId = async (req, res) => {
+  try {
+    const data = await recordService.getByExamId(req.params.examId);
+    res.status(200).json({ success: true, message: "Records retrieved", data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+exports.getStudentPerformance = async (req, res) => {
+  try {
+    const data = await recordService.getStudentPerformance(req.params.studentId);
+    res.status(200).json({ success: true, message: "Student performance retrieved", data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};

@@ -12,7 +12,7 @@ const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
- * /api/v1/student_route/signup:
+ * /api/v1/student/signup:
  *   post:
  *     tags: [Student]
  *     summary: Student signup
@@ -71,7 +71,7 @@ router.post("/signup", studentController.registerStudent);
 
 /**
  * @swagger
- * /api/v1/student_route/login:
+ * /api/v1/student/login:
  *   post:
  *     tags: [Student]
  *     summary: Student login
@@ -99,7 +99,7 @@ router.post("/login", studentController.loginStudent);
 
 /**
  * @swagger
- * /api/v1/student_route/forgot_password:
+ * /api/v1/student/forgot_password:
  *   post:
  *     tags: [Student]
  *     summary: Forgot password
@@ -123,7 +123,7 @@ router.post("/forgot_password", studentController.forgotPassword);
 
 /**
  * @swagger
- * /api/v1/student_route/verify-reset-otp:
+ * /api/v1/student/verify-reset-otp:
  *   post:
  *     tags: [Student]
  *     summary: Verify reset OTP
@@ -150,7 +150,7 @@ router.post("/verify-reset-otp", studentController.verifyResetOTP);
 
 /**
  * @swagger
- * /api/v1/student_route/reset-password:
+ * /api/v1/student/reset-password:
  *   post:
  *     tags: [Student]
  *     summary: Reset password
@@ -181,7 +181,7 @@ router.post("/reset-password", studentController.resetPassword);
 
 /**
  * @swagger
- * /api/v1/student_route/getallstudents:
+ * /api/v1/student/getallstudents:
  *   get:
  *     tags: [Student]
  *     summary: Get all students
@@ -195,7 +195,7 @@ router.get("/getallstudents", authenticateToken, studentController.getAllStudent
 
 /**
  * @swagger
- * /api/v1/student_route/updatestudent/{id}:
+ * /api/v1/student/updatestudent/{id}:
  *   put:
  *     tags: [Student]
  *     summary: Update student
@@ -221,7 +221,7 @@ router.put("/updatestudent/:id", authenticateToken, studentController.updateStud
 
 /**
  * @swagger
- * /api/v1/student_route/verify-otp:
+ * /api/v1/student/verify-otp:
  *   post:
  *     tags: [Student]
  *     summary: Verify OTP

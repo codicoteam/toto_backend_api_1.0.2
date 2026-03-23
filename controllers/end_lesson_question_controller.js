@@ -56,3 +56,10 @@ exports.getQuestionsByTopicContentId = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+// Aliases for router compatibility
+exports.getAllQuestions = exports.getAll;
+exports.getQuestionById = exports.getById;
+exports.createQuestion = exports.create;
+exports.updateQuestion = exports.update;
+exports.deleteQuestion = exports.delete;

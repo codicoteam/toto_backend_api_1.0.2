@@ -12,7 +12,7 @@ const { authenticateToken } = require("../middlewares/auth");
 
 /**
  * @swagger
- * /api/v1/comment_content:
+ * /api/v1/comment-content:
  *   get:
  *     tags: [Comment_content]
  *     summary: Get all comment_content records
@@ -26,7 +26,7 @@ router.get("/", authenticateToken, comment_contentController.getAll);
 
 /**
  * @swagger
- * /api/v1/comment_content/{id}:
+ * /api/v1/comment-content/{id}:
  *   get:
  *     tags: [Comment_content]
  *     summary: Get comment_content by ID
@@ -46,7 +46,7 @@ router.get("/:id", authenticateToken, comment_contentController.getById);
 
 /**
  * @swagger
- * /api/v1/comment_content:
+ * /api/v1/comment-content:
  *   post:
  *     tags: [Comment_content]
  *     summary: Create new comment_content
@@ -58,6 +58,17 @@ router.get("/:id", authenticateToken, comment_contentController.getById);
  *         application/json:
  *           schema:
  *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Sample Comment"
+ *               description:
+ *                 type: string
+ *                 example: "This is a sample comment description"
+ *               status:
+ *                 type: string
+ *                 enum: [active, inactive]
+ *                 example: "active"
  *     responses:
  *       201:
  *         description: Created successfully
@@ -66,7 +77,7 @@ router.post("/", authenticateToken, comment_contentController.create);
 
 /**
  * @swagger
- * /api/v1/comment_content/{id}:
+ * /api/v1/comment-content/{id}:
  *   put:
  *     tags: [Comment_content]
  *     summary: Update comment_content
@@ -92,7 +103,7 @@ router.put("/:id", authenticateToken, comment_contentController.update);
 
 /**
  * @swagger
- * /api/v1/comment_content/{id}:
+ * /api/v1/comment-content/{id}:
  *   delete:
  *     tags: [Comment_content]
  *     summary: Delete comment_content

@@ -1,9 +1,9 @@
-const end_lesson_question = require("../models/end_lesson_question.js");
+const EndLessonQuestion = require("../models/end_lesson_question_model.js");
 
 // Basic CRUD operations
 exports.getAll = async () => {
   try {
-    return await end_lesson_question.find();
+    return await EndLessonQuestion.find();
   } catch (error) {
     throw new Error("Failed to fetch questions: " + error.message);
   }
@@ -11,7 +11,7 @@ exports.getAll = async () => {
 
 exports.getById = async (id) => {
   try {
-    const item = await end_lesson_question.findById(id);
+    const item = await EndLessonQuestion.findById(id);
     if (!item) throw new Error("Question not found");
     return item;
   } catch (error) {
@@ -21,7 +21,7 @@ exports.getById = async (id) => {
 
 exports.create = async (data) => {
   try {
-    const item = new end_lesson_question(data);
+    const item = new EndLessonQuestion(data);
     return await item.save();
   } catch (error) {
     throw new Error("Failed to create question: " + error.message);
@@ -30,7 +30,7 @@ exports.create = async (data) => {
 
 exports.update = async (id, data) => {
   try {
-    const item = await end_lesson_question.findByIdAndUpdate(id, data, { new: true });
+    const item = await EndLessonQuestion.findByIdAndUpdate(id, data, { new: true });
     if (!item) throw new Error("Question not found");
     return item;
   } catch (error) {
@@ -40,10 +40,30 @@ exports.update = async (id, data) => {
 
 exports.delete = async (id) => {
   try {
-    const item = await end_lesson_question.findByIdAndDelete(id);
+    const item = await EndLessonQuestion.findByIdAndDelete(id);
     if (!item) throw new Error("Question not found");
     return { message: "Question deleted successfully" };
   } catch (error) {
     throw new Error("Failed to delete question: " + error.message);
   }
 };
+
+// Get questions by topic content ID
+exports.getByTopicContentId = async (topicContentId) => {
+  try {
+    const items = await EndLessonQuestion.find({ 
+      topicContentId: topicContentId,
+      status: 'active' 
+    });
+    return items;
+  } catch (error) {
+    throw new Error("Failed to fetch questions by topic: " + error.message);
+  }
+};
+
+// Aliases for compatibility
+exports.getAllQuestions = exports.getAll;
+exports.getQuestionById = exports.getById;
+exports.createQuestion = exports.create;
+exports.updateQuestion = exports.update;
+exports.deleteQuestion = exports.delete;

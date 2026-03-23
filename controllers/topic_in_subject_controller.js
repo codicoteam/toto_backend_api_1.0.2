@@ -72,3 +72,42 @@ exports.toggleVisibility = async (req, res) => {
     res.status(400).json({ success: false, error: error.message });
   }
 };
+
+exports.getBySubscriptionPeriod = async (req, res) => {
+  try {
+    const data = await topicService.getBySubscriptionPeriod(req.params.period);
+    res.status(200).json({ success: true, message: "Topics retrieved", data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+exports.updateOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { order } = req.body;
+    const data = await topicService.updateOrder(id, order);
+    res.status(200).json({ success: true, message: "Order updated", data });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
+
+exports.bulkUpdateOrder = async (req, res) => {
+  try {
+    const { updates } = req.body;
+    const data = await topicService.bulkUpdateOrder(updates);
+    res.status(200).json({ success: true, message: "Orders updated", data });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
+
+exports.getWithPricing = async (req, res) => {
+  try {
+    const data = await topicService.getWithPricing(req.params.id);
+    res.status(200).json({ success: true, message: "Topic retrieved", data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};

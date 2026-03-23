@@ -78,3 +78,12 @@ exports.getPaymentsByStatus = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+exports.getPaymentsByStudentId = async (req, res) => {
+  try {
+    const data = await paymentService.getByStudentId(req.params.studentId);
+    res.status(200).json({ success: true, message: "Student payments retrieved", data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};

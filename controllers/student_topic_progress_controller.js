@@ -1,19 +1,19 @@
-const student_topic_progressService = require("../services/student_topic_progress_service.js");
+const progressService = require("../services/student_topic_progress_service.js");
 
 // Basic CRUD functions
 exports.getAll = async (req, res) => {
   try {
-    const data = await student_topic_progressService.getAll();
+    const data = await progressService.getAll();
     res.status(200).json({
       success: true,
-      message: "Student_topic_progress records retrieved successfully",
+      message: "Progress records retrieved successfully",
       count: data.length,
       data: data
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error retrieving student_topic_progress",
+      message: "Error retrieving progress records",
       error: error.message
     });
   }
@@ -21,16 +21,16 @@ exports.getAll = async (req, res) => {
 
 exports.getById = async (req, res) => {
   try {
-    const data = await student_topic_progressService.getById(req.params.id);
+    const data = await progressService.getById(req.params.id);
     res.status(200).json({
       success: true,
-      message: "Student_topic_progress retrieved successfully",
+      message: "Progress record retrieved successfully",
       data: data
     });
   } catch (error) {
     res.status(404).json({
       success: false,
-      message: "Student_topic_progress not found",
+      message: "Progress record not found",
       error: error.message
     });
   }
@@ -38,16 +38,16 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const data = await student_topic_progressService.create(req.body);
+    const data = await progressService.create(req.body);
     res.status(201).json({
       success: true,
-      message: "Student_topic_progress created successfully",
+      message: "Progress record created successfully",
       data: data
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: "Failed to create student_topic_progress",
+      message: "Failed to create progress record",
       error: error.message
     });
   }
@@ -55,16 +55,16 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const data = await student_topic_progressService.update(req.params.id, req.body);
+    const data = await progressService.update(req.params.id, req.body);
     res.status(200).json({
       success: true,
-      message: "Student_topic_progress updated successfully",
+      message: "Progress record updated successfully",
       data: data
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: "Failed to update student_topic_progress",
+      message: "Failed to update progress record",
       error: error.message
     });
   }
@@ -72,23 +72,110 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
   try {
-    await student_topic_progressService.delete(req.params.id);
+    await progressService.delete(req.params.id);
     res.status(200).json({
       success: true,
-      message: "Student_topic_progress deleted successfully"
+      message: "Progress record deleted successfully"
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to delete student_topic_progress",
+      message: "Failed to delete progress record",
       error: error.message
     });
   }
 };
 
-// Aliases for compatibility
-exports.getAllStudent_topic_progresss = exports.getAll;
-exports.getStudent_topic_progressById = exports.getById;
-exports.createStudent_topic_progress = exports.create;
-exports.updateStudent_topic_progress = exports.update;
-exports.deleteStudent_topic_progress = exports.delete;
+// Additional methods
+exports.getAllProgress = exports.getAll;
+exports.getProgressById = exports.getById;
+exports.createProgress = exports.create;
+exports.updateProgress = exports.update;
+exports.deleteProgress = exports.delete;
+
+exports.getByStudentId = async (req, res) => {
+  try {
+    const data = await progressService.getByStudentId(req.params.studentId);
+    res.status(200).json({
+      success: true,
+      message: "Student progress retrieved successfully",
+      data: data
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve student progress",
+      error: error.message
+    });
+  }
+};
+
+exports.getByTopicId = async (req, res) => {
+  try {
+    const data = await progressService.getByTopicId(req.params.topicId);
+    res.status(200).json({
+      success: true,
+      message: "Topic progress retrieved successfully",
+      data: data
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve topic progress",
+      error: error.message
+    });
+  }
+};
+
+exports.getStudentTopicProgress = async (req, res) => {
+  try {
+    const { studentId, topicId } = req.params;
+    const data = await progressService.getStudentTopicProgress(studentId, topicId);
+    res.status(200).json({
+      success: true,
+      message: "Student topic progress retrieved successfully",
+      data: data
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve student topic progress",
+      error: error.message
+    });
+  }
+};
+
+exports.getStudentProgressSummary = async (req, res) => {
+  try {
+    const data = await progressService.getStudentProgressSummary(req.params.studentId);
+    res.status(200).json({
+      success: true,
+      message: "Student progress summary retrieved successfully",
+      data: data
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve student progress summary",
+      error: error.message
+    });
+  }
+};
+
+exports.updateStudentProgress = async (req, res) => {
+  try {
+    const { studentId, topicId } = req.params;
+    const data = await progressService.updateProgress(studentId, topicId, req.body);
+    res.status(200).json({
+      success: true,
+      message: "Progress updated successfully",
+      data: data
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "Failed to update progress",
+      error: error.message
+    });
+  }
+};

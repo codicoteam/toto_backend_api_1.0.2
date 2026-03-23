@@ -90,3 +90,33 @@ exports.getDashboardData = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+exports.getTransactions = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const limit = req.query.limit ? parseInt(req.query.limit) : 50;
+    const data = await walletService.getTransactions(studentId, limit);
+    res.status(200).json({ success: true, message: "Transactions retrieved", data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+exports.getSummary = async (req, res) => {
+  try {
+    const data = await walletService.getSummary();
+    res.status(200).json({ success: true, message: "Wallet summary retrieved", data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+exports.processPayment = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const data = await walletService.processPayment(studentId, req.body);
+    res.status(200).json({ success: true, message: "Payment processed", data });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+};

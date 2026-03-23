@@ -55,3 +55,49 @@ exports.getCommunityById = exports.getById;
 exports.createCommunity = exports.create;
 exports.updateCommunity = exports.update;
 exports.deleteCommunity = exports.delete;
+
+// Get communities by subject ID
+exports.getBySubjectId = async (subjectId) => {
+  try {
+    // This assumes your model has a subject field
+    // If not, you'll need to adjust this query
+    const items = await Community.find({ subject: subjectId, isActive: true });
+    return items;
+  } catch (error) {
+    throw new Error("Failed to fetch communities by subject: " + error.message);
+  }
+};
+
+// Add student to community
+exports.addStudent = async (communityId, userId) => {
+  try {
+    const community = await Community.findById(communityId);
+    if (!community) throw new Error("Community not found");
+    
+    // Add student logic here - depends on your model structure
+    // For example, if you have a members array:
+    // community.members = community.members || [];
+    // community.members.push({ userId, userType: 'student' });
+    // await community.save();
+    
+    return community;
+  } catch (error) {
+    throw new Error("Failed to join community: " + error.message);
+  }
+};
+
+// Remove student from community
+exports.removeStudent = async (communityId, userId) => {
+  try {
+    const community = await Community.findById(communityId);
+    if (!community) throw new Error("Community not found");
+    
+    // Remove student logic here - depends on your model structure
+    // community.members = community.members.filter(m => m.userId.toString() !== userId);
+    // await community.save();
+    
+    return community;
+  } catch (error) {
+    throw new Error("Failed to leave community: " + error.message);
+  }
+};

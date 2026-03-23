@@ -10,6 +10,8 @@ exports.getAll = async (req, res) => {
       data: data
     });
   } catch (error) {
+    console.error("Login error details:", error);
+    console.error("Request body:", req.body);
     res.status(500).json({
       success: false,
       message: "Failed to retrieve admins",
@@ -27,6 +29,8 @@ exports.getById = async (req, res) => {
       data: data
     });
   } catch (error) {
+    console.error("Login error details:", error);
+    console.error("Request body:", req.body);
     res.status(404).json({
       success: false,
       message: "Admin not found",
@@ -44,6 +48,8 @@ exports.create = async (req, res) => {
       data: data
     });
   } catch (error) {
+    console.error("Login error details:", error);
+    console.error("Request body:", req.body);
     res.status(400).json({
       success: false,
       message: "Failed to create admin",
@@ -61,6 +67,8 @@ exports.update = async (req, res) => {
       data: data
     });
   } catch (error) {
+    console.error("Login error details:", error);
+    console.error("Request body:", req.body);
     res.status(400).json({
       success: false,
       message: "Failed to update admin",
@@ -77,6 +85,8 @@ exports.delete = async (req, res) => {
       message: "Admin deleted successfully"
     });
   } catch (error) {
+    console.error("Login error details:", error);
+    console.error("Request body:", req.body);
     res.status(500).json({
       success: false,
       message: "Failed to delete admin",
@@ -95,6 +105,8 @@ exports.registerAdmin = async (req, res) => {
       data: data
     });
   } catch (error) {
+    console.error("Login error details:", error);
+    console.error("Request body:", req.body);
     res.status(400).json({
       success: false,
       message: "Failed to register admin",
@@ -113,6 +125,8 @@ exports.loginAdmin = async (req, res) => {
       data: result
     });
   } catch (error) {
+    console.error("Login error details:", error);
+    console.error("Request body:", req.body);
     res.status(401).json({
       success: false,
       message: "Login failed",
@@ -134,6 +148,8 @@ exports.forgotPassword = async (req, res) => {
       data: { email, otp } // Remove otp in production
     });
   } catch (error) {
+    console.error("Login error details:", error);
+    console.error("Request body:", req.body);
     res.status(500).json({
       success: false,
       message: "Failed to send OTP",
@@ -159,6 +175,8 @@ exports.verifyResetOTP = async (req, res) => {
       });
     }
   } catch (error) {
+    console.error("Login error details:", error);
+    console.error("Request body:", req.body);
     res.status(500).json({
       success: false,
       message: "Failed to verify OTP",
@@ -178,6 +196,8 @@ exports.resetPassword = async (req, res) => {
       data: result
     });
   } catch (error) {
+    console.error("Login error details:", error);
+    console.error("Request body:", req.body);
     res.status(500).json({
       success: false,
       message: "Failed to reset password",

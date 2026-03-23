@@ -112,3 +112,36 @@ exports.getLessonInfo = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+exports.getByTopicId = async (req, res) => {
+  try {
+    const data = await topicContentService.getByTopicId(req.params.topicId);
+    res.status(200).json({ success: true, message: "Content retrieved", data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+exports.publishContent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { publish } = req.body;
+    const data = await topicContentService.publishContent(id, publish);
+    res.status(200).json({ 
+      success: true, 
+      message: `Content ${publish ? 'published' : 'unpublished'} successfully`, 
+      data 
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
+
+exports.getByContentType = async (req, res) => {
+  try {
+    const data = await topicContentService.getByContentType(req.params.contentType);
+    res.status(200).json({ success: true, message: "Content retrieved", data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
